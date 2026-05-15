@@ -63,9 +63,20 @@ CREATE TABLE signalements (
   user_id        UUID REFERENCES auth.users(id),
   duree_validite INTEGER DEFAULT 60,
   created_at     TIMESTAMPTZ DEFAULT NOW(),
-  expire_at      TIMESTAMPTZ GENERATED ALWAYS AS
-                   (created_at + (duree_validite * INTERVAL '1 minute')) STORED
+  expire_at      TIMESTAMPTZ
 );
+
+CREATE OR REPLACE FUNCTION set_expire_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.expire_at := NEW.created_at + (NEW.duree_validite * INTERVAL '1 minute');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_signalements_expire
+  BEFORE INSERT OR UPDATE ON signalements
+  FOR EACH ROW EXECUTE FUNCTION set_expire_at();
 
 CREATE INDEX idx_signal_coords  ON signalements USING GIST(coords);
 CREATE INDEX idx_signal_expire  ON signalements(expire_at);
