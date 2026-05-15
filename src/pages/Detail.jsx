@@ -10,6 +10,10 @@ import Badge from '../components/ui/Badge';
 import Bouton from '../components/ui/Bouton';
 import Chargement from '../components/ui/Chargement';
 import Toast from '../components/ui/Toast';
+import BadgePrixActuel from '../components/prix/BadgePrixActuel';
+import BoutonSignalerPrix from '../components/prix/BoutonSignalerPrix';
+import HistoriquePrix from '../components/prix/HistoriquePrix';
+import { usePrix } from '../hooks/usePrix';
 
 function parseCoords(c) {
   if (!c) return null;
@@ -134,6 +138,8 @@ export default function Detail() {
     );
   }
 
+  const { prixActuel } = usePrix(ligne?.id);
+
   const dep = parseCoords(ligne.depart_coords);
   const arr = parseCoords(ligne.arrivee_coords);
   const centre = dep && arr ? { lat: (dep.lat + arr.lat) / 2, lng: (dep.lng + arr.lng) / 2 } : undefined;
@@ -178,25 +184,38 @@ export default function Detail() {
           </div>
         )}
 
-        <div className="bg-white rounded-xl border border-gray-100 p-4 grid grid-cols-3 gap-3 text-center">
-          <div>
-            <Coins className="w-5 h-5 text-kotrou-orange mx-auto mb-1" />
-            <p className="text-sm font-bold text-kotrou-gris">{ligne.prix ? `${ligne.prix} F` : '?'}</p>
-            <p className="text-[10px] text-gray-400">Prix</p>
+        <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div>
+              <Coins className="w-5 h-5 text-kotrou-orange mx-auto mb-1" />
+              <p className="text-sm font-bold text-kotrou-gris">{ligne.prix ? `${ligne.prix} F` : '?'}</p>
+              <p className="text-[10px] text-gray-400">Prix de base</p>
+            </div>
+            <div>
+              <Clock className="w-5 h-5 text-kotrou-orange mx-auto mb-1" />
+              <p className="text-sm font-bold text-kotrou-gris">{ligne.duree ? `${ligne.duree} min` : '?'}</p>
+              <p className="text-[10px] text-gray-400">Durée</p>
+            </div>
+            <div>
+              <Calendar className="w-5 h-5 text-kotrou-orange mx-auto mb-1" />
+              <p className="text-sm font-bold text-kotrou-gris">
+                {ligne.horaire_debut?.slice(0, 5) || '05:00'} – {ligne.horaire_fin?.slice(0, 5) || '22:00'}
+              </p>
+              <p className="text-[10px] text-gray-400">Horaires</p>
+            </div>
           </div>
-          <div>
-            <Clock className="w-5 h-5 text-kotrou-orange mx-auto mb-1" />
-            <p className="text-sm font-bold text-kotrou-gris">{ligne.duree ? `${ligne.duree} min` : '?'}</p>
-            <p className="text-[10px] text-gray-400">Durée</p>
-          </div>
-          <div>
-            <Calendar className="w-5 h-5 text-kotrou-orange mx-auto mb-1" />
-            <p className="text-sm font-bold text-kotrou-gris">
-              {ligne.horaire_debut?.slice(0, 5) || '05:00'} – {ligne.horaire_fin?.slice(0, 5) || '22:00'}
-            </p>
-            <p className="text-[10px] text-gray-400">Horaires</p>
-          </div>
+
+          <BadgePrixActuel prixBase={ligne.prix} prixActuel={prixActuel} />
         </div>
+
+        <BoutonSignalerPrix
+          ligneId={ligne.id}
+          nomLigne={ligne.nom_ligne}
+          prixBase={ligne.prix}
+          onSignalement={() => setToast({ message: 'Merci ! +5 points', type: 'succes' })}
+        />
+
+        <HistoriquePrix ligneId={ligne.id} prixBase={ligne.prix} />
 
         {ligne.depart_reperes && (
           <div className="bg-white rounded-xl border border-gray-100 p-4">

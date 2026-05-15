@@ -1,6 +1,8 @@
 import { Bus, Footprints, Clock, Coins } from 'lucide-react';
 import { fr } from '../../i18n/fr';
 import BadgeTransport from './BadgeTransport';
+import BadgePrixActuel from '../prix/BadgePrixActuel';
+import { usePrix } from '../../hooks/usePrix';
 
 const COULEURS_LIGNE = {
   gbaka: 'bg-transport-gbaka',
@@ -12,7 +14,7 @@ const COULEURS_LIGNE = {
 export default function CarteEtape({ etape, index, estDerniere }) {
   const couleur = COULEURS_LIGNE[etape.type] || COULEURS_LIGNE.marche;
   const Icone = etape.type === 'marche' ? Footprints : Bus;
-  const prixTexte = etape.prix != null ? `${etape.prix} ${fr.itineraire.fcfa}` : fr.itineraire.prix_inconnu;
+  const { prixActuel } = usePrix(etape.type !== 'marche' ? etape.ligne?.id : null);
 
   return (
     <div className="flex gap-3">
@@ -41,10 +43,7 @@ export default function CarteEtape({ etape, index, estDerniere }) {
             {etape.dureeMinutes} {fr.itineraire.min}
           </span>
           {etape.type !== 'marche' && (
-            <span className="flex items-center gap-1">
-              <Coins className="w-3 h-3" />
-              {prixTexte}
-            </span>
+            <BadgePrixActuel prixBase={etape.prix} prixActuel={prixActuel} compact />
           )}
         </div>
       </div>
