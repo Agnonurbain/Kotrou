@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#F97316"/>
+  <g fill="none" stroke="#FFF" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bus body -->
+    <rect x="96" y="160" width="320" height="192" rx="24"/>
+    <!-- Windows -->
+    <rect x="128" y="192" width="72" height="64" rx="8"/>
+    <rect x="220" y="192" width="72" height="64" rx="8"/>
+    <rect x="312" y="192" width="72" height="64" rx="8"/>
+    <!-- Wheels -->
+    <circle cx="176" cy="368" r="28" fill="#FFF"/>
+    <circle cx="336" cy="368" r="28" fill="#FFF"/>
+    <!-- Route line -->
+    <path d="M64 112 h384" stroke-dasharray="24 16"/>
+  </g>
+  <text x="256" y="460" text-anchor="middle" fill="#FFF" font-family="sans-serif" font-weight="700" font-size="48">KOTROU</text>
+</svg>
