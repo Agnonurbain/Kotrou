@@ -10,6 +10,7 @@ import Explorateur from './pages/Explorateur';
 import Contribution from './pages/Contribution';
 import Validation from './pages/Validation';
 import Profil from './pages/Profil';
+import TrajetsFavoris from './pages/TrajetsFavoris';
 import Parametres from './pages/Parametres';
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/itineraire" element={<Itineraire />} />
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/validation" element={<Validation />} />
+        <Route path="/trajets-favoris" element={<TrajetsFavoris />} />
         <Route path="/parametres" element={<Parametres />} />
         <Route path="*" element={
           <div className="flex flex-col min-h-screen">

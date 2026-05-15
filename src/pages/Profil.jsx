@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, ChevronRight, Settings, Award, CheckCircle, Lock } from 'lucide-react';
+import { LogOut, ChevronRight, Settings, Award, CheckCircle, Lock, Star } from 'lucide-react';
 import { fr } from '../i18n/fr';
 import { supabase } from '../supabase';
 import { useAuth } from '../hooks/useAuth';
@@ -127,6 +127,17 @@ export default function Profil() {
             })}
           </div>
         </div>
+
+        <button
+          onClick={() => navigate('/trajets-favoris')}
+          className="w-full bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between active:bg-gray-50"
+        >
+          <div className="flex items-center gap-3">
+            <Star className="w-5 h-5 text-kotrou-orange" />
+            <span className="text-sm font-medium text-kotrou-gris">Mes trajets favoris</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-gray-300" />
+        </button>
 
         <div className="bg-white rounded-xl border border-gray-100 p-4">
           <div className="flex items-center justify-between mb-3">

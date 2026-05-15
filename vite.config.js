@@ -11,6 +11,7 @@ export default defineConfig({
       manifest: false,
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,woff2}'],
+        importScripts: ['/sw-notifications.js'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.protomaps\.com\/tiles/,

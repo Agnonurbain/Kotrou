@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Star, X } from 'lucide-react';
 import { fr } from '../i18n/fr';
 import Header from '../components/layout/Header';
 import Carte from '../components/carte/Carte';
@@ -9,9 +9,13 @@ import PrixTotal from '../components/itineraire/PrixTotal';
 import Chargement from '../components/ui/Chargement';
 import EtatVide from '../components/ui/EtatVide';
 import Bouton from '../components/ui/Bouton';
+import ChampTexte from '../components/ui/ChampTexte';
 import BoutonSignalement from '../components/signalement/BoutonSignalement';
 import Toast from '../components/ui/Toast';
 import { useLignes } from '../hooks/useLignes';
+import { useTrajets } from '../hooks/useTrajets';
+import { usePushNotifications } from '../hooks/usePushNotifications';
+import { useAuth } from '../hooks/useAuth';
 
 function labelOnglet(it, index) {
   if (it.direct) return 'Direct';
@@ -19,15 +23,30 @@ function labelOnglet(it, index) {
   return `Option ${index + 1}`;
 }
 
+const JOURS_SEMAINE = [
+  { id: 'lun', label: 'L' }, { id: 'mar', label: 'M' }, { id: 'mer', label: 'Me' },
+  { id: 'jeu', label: 'J' }, { id: 'ven', label: 'V' }, { id: 'sam', label: 'S' }, { id: 'dim', label: 'D' },
+];
+
 export default function Itineraire() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const { chercher } = useLignes();
+  const { utilisateur, demanderConnexion } = useAuth();
+  const { sauvegarder } = useTrajets();
+  const { sAbonner, estAbonne } = usePushNotifications();
 
   const [itineraires, setItineraires] = useState(null);
   const [actif, setActif] = useState(0);
   const [etat, setEtat] = useState('loading');
   const [toast, setToast] = useState(null);
+
+  const [showSave, setShowSave] = useState(false);
+  const [saveNom, setSaveNom] = useState('');
+  const [saveHeureDepart, setSaveHeureDepart] = useState('');
+  const [saveHeureArrivee, setSaveHeureArrivee] = useState('');
+  const [saveJours, setSaveJours] = useState(['lun', 'mar', 'mer', 'jeu', 'ven']);
+  const [saving, setSaving] = useState(false);
 
   const depLat = parseFloat(params.get('dep_lat'));
   const depLng = parseFloat(params.get('dep_lng'));
@@ -136,6 +155,106 @@ export default function Itineraire() {
               onClick={() => setToast({ message: fr.signalement.merci, type: 'info' })}
             >
               Signaler un problème
+            </Bouton>
+
+            <Bouton
+              variante="primaire"
+              fullWidth
+              icone={<Star className="w-4 h-4" />}
+              onClick={() => {
+                if (!utilisateur) { demanderConnexion(); return; }
+                setShowSave(true);
+              }}
+            >
+              Sauvegarder ce trajet
+            </Bouton>
+          </div>
+        </div>
+      )}
+
+      {showSave && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end justify-center">
+          <div className="bg-white rounded-t-2xl w-full max-w-md p-5 space-y-4 animate-slide-up">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-bold text-kotrou-gris">Sauvegarder ce trajet</p>
+              <button onClick={() => setShowSave(false)}><X className="w-5 h-5 text-gray-400" /></button>
+            </div>
+
+            <ChampTexte
+              label="Nom"
+              placeholder="Ex : Aller au boulot"
+              valeur={saveNom}
+              onChange={setSaveNom}
+            />
+
+            <div>
+              <p className="text-xs text-gray-400 mb-2">Horaire habituel (optionnel)</p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="time"
+                  value={saveHeureDepart}
+                  onChange={(e) => setSaveHeureDepart(e.target.value)}
+                  className="flex-1 h-10 px-3 border border-gray-200 rounded-lg text-sm text-kotrou-gris focus:outline-none focus:ring-2 focus:ring-kotrou-orange/30"
+                />
+                <span className="text-gray-400 text-sm">→</span>
+                <input
+                  type="time"
+                  value={saveHeureArrivee}
+                  onChange={(e) => setSaveHeureArrivee(e.target.value)}
+                  className="flex-1 h-10 px-3 border border-gray-200 rounded-lg text-sm text-kotrou-gris focus:outline-none focus:ring-2 focus:ring-kotrou-orange/30"
+                />
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-400 mb-2">Jours</p>
+              <div className="flex gap-1.5">
+                {JOURS_SEMAINE.map((j) => (
+                  <button
+                    key={j.id}
+                    onClick={() => setSaveJours((prev) =>
+                      prev.includes(j.id) ? prev.filter((d) => d !== j.id) : [...prev, j.id]
+                    )}
+                    className={`w-9 h-9 rounded-full text-xs font-semibold ${
+                      saveJours.includes(j.id) ? 'bg-kotrou-orange text-white' : 'bg-gray-100 text-gray-400'
+                    }`}
+                  >
+                    {j.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Bouton
+              variante="primaire"
+              fullWidth
+              chargement={saving}
+              onClick={async () => {
+                if (!saveNom.trim()) { setToast({ message: 'Donne un nom à ce trajet', type: 'erreur' }); return; }
+                setSaving(true);
+                try {
+                  await sauvegarder({
+                    nom: saveNom.trim(),
+                    departNom: depNom,
+                    departCoords: { lat: depLat, lng: depLng },
+                    arriveeNom: arrNom,
+                    arriveeCoords: { lat: arrLat, lng: arrLng },
+                    heureDepart: saveHeureDepart || null,
+                    heureArrivee: saveHeureArrivee || null,
+                    joursActifs: saveJours,
+                  });
+                  setShowSave(false);
+                  const abonne = await estAbonne();
+                  if (!abonne) await sAbonner();
+                  setToast({ message: 'Trajet sauvegardé ! On te préviendra si danger.', type: 'succes' });
+                } catch {
+                  setToast({ message: 'Erreur de sauvegarde', type: 'erreur' });
+                } finally {
+                  setSaving(false);
+                }
+              }}
+            >
+              Enregistrer et activer alertes
             </Bouton>
           </div>
         </div>
