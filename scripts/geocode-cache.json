@@ -1,0 +1,74 @@
+{
+  "cocody, abidjan, côte d'ivoire": {
+    "lat": 5.357367,
+    "lng": -3.994934
+  },
+  "adjamé, abidjan, côte d'ivoire": {
+    "lat": 5.3531211,
+    "lng": -4.0222008
+  },
+  "treichville, abidjan, côte d'ivoire": {
+    "lat": 5.306008,
+    "lng": -4.0081051
+  },
+  "terre rouge, gonzagueville, port-bouët, abidjan, côte d'ivoire": {
+    "lat": 5.2402627,
+    "lng": -3.8995885
+  },
+  "marcory, abidjan, côte d'ivoire": {
+    "lat": 5.303612,
+    "lng": -3.985395
+  },
+  "yopougon, abidjan, côte d'ivoire": {
+    "lat": 5.335194,
+    "lng": -4.075756
+  },
+  "vridi canal ( rue des pétroliers ), abidjan, côte d'ivoire": {
+    "lat": 5.2652521,
+    "lng": -4.0130775
+  },
+  "plateau, abidjan, côte d'ivoire": {
+    "lat": 5.3279819,
+    "lng": -4.0243927
+  },
+  "riviera m'badon, cocody, abidjan, côte d'ivoire": {
+    "lat": 5.3286925,
+    "lng": -3.9324215
+  },
+  "koumassi-grand-marché, koumassi, abidjan, côte d'ivoire": {
+    "lat": 5.2937545,
+    "lng": -3.9566687
+  },
+  "riviera faya, cocody, abidjan, côte d'ivoire": {
+    "lat": 5.3671539,
+    "lng": -3.9450806
+  },
+  "marcory-résidentiel, marcory, abidjan, côte d'ivoire": {
+    "lat": 5.3115413,
+    "lng": -3.9937419
+  },
+  "yopougon-keneya, yopougon, abidjan, côte d'ivoire": {
+    "lat": 5.3503718,
+    "lng": -4.0734915
+  },
+  "samaké, abobo, abidjan, côte d'ivoire": {
+    "lat": 5.4152691,
+    "lng": -4.0062815
+  },
+  "treichville-zone-4, treichville, abidjan, côte d'ivoire": {
+    "lat": 5.307495,
+    "lng": -4.0164306
+  },
+  "vridi, port-bouët, abidjan, côte d'ivoire": {
+    "lat": 5.2648573,
+    "lng": -4.0023228
+  },
+  "abobo-anador, abobo, abidjan, côte d'ivoire": {
+    "lat": 5.4056555,
+    "lng": -4.0139794
+  },
+  "angré, cocody, abidjan, côte d'ivoire": {
+    "lat": 5.4040496,
+    "lng": -3.9888107
+  }
+}

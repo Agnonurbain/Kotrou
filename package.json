@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
+    "csv-parse": "^6.2.1",
+    "dotenv": "^17.4.2",
     "idb": "^8.0.1",
     "lucide-react": "^0.468.0",
     "maplibre-gl": "^4.7.1",
