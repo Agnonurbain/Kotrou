@@ -1,19 +1,21 @@
 import { openDB } from 'idb';
 
 const DB_NOM = 'kotrou_offline';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_LIGNES = 'lignes';
 const STORE_META = 'meta';
+const STORE_TRAJET = 'trajet_en_cours';
 
 export async function ouvrirDB() {
   return openDB(DB_NOM, DB_VERSION, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains(STORE_LIGNES)) {
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
         const store = db.createObjectStore(STORE_LIGNES, { keyPath: 'id' });
         store.createIndex('commune', 'depart_commune');
-      }
-      if (!db.objectStoreNames.contains(STORE_META)) {
         db.createObjectStore(STORE_META);
+      }
+      if (oldVersion < 2) {
+        db.createObjectStore(STORE_TRAJET, { keyPath: 'id' });
       }
     },
   });
