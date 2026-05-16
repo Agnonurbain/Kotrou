@@ -192,13 +192,20 @@ export async function calculerItineraires(depart, arrivee, options = {}, context
   let toutesLignes;
   let directes;
 
+  const lignesLocales = await getToutesLignesLocales();
+
   if (modeHorsLigne || !supabase) {
-    toutesLignes = await getToutesLignesLocales();
+    toutesLignes = lignesLocales;
     directes = chercherDirectesHorsLigne(depart, arrivee, toutesLignes);
   } else {
     directes = await chercherDirectesEnLigne(depart, arrivee, supabase);
     const { data: all } = await supabase.from('lignes_fiables').select('*').gte('confiance', 0);
-    toutesLignes = all || [];
+    const idsEnLigne = new Set((all || []).map((l) => l.nom_ligne));
+    const localesUniques = lignesLocales.filter((l) => !idsEnLigne.has(l.nom_ligne));
+    toutesLignes = [...(all || []), ...localesUniques];
+    const directesLocales = chercherDirectesHorsLigne(depart, arrivee, lignesLocales);
+    const idsDirectes = new Set(directes.map((l) => l.nom_ligne));
+    directes = [...directes, ...directesLocales.filter((l) => !idsDirectes.has(l.nom_ligne))];
   }
 
   const exclus = await chercherSignalements(supabase, [...directes, ...toutesLignes], eviterDangers && !modeHorsLigne);
