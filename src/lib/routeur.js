@@ -85,6 +85,11 @@ function coordsArrivee(l) {
   return parseCoords(l.arrivee_coords);
 }
 
+function normaliserCommune(nom) {
+  if (!nom) return null;
+  return nom.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
+}
+
 async function chercherDirectesEnLigne(depart, arrivee, supabase) {
   const { data, error } = await supabase.rpc('chercher_lignes_directes', {
     lng_dep: depart.lng,
@@ -100,7 +105,14 @@ async function chercherDirectesEnLigne(depart, arrivee, supabase) {
       .from('lignes_fiables')
       .select('*')
       .gte('confiance', 0);
-    return (fallback || []).filter((l) => {
+    if (!fallback) return [];
+    const nomDep = normaliserCommune(depart.nom);
+    const nomArr = normaliserCommune(arrivee.nom);
+    return fallback.filter((l) => {
+      const parCommune = nomDep && nomArr
+        && normaliserCommune(l.depart_commune) === nomDep
+        && normaliserCommune(l.arrivee_commune) === nomArr;
+      if (parCommune) return true;
       const cd = coordsDepart(l);
       const ca = coordsArrivee(l);
       if (!cd || !ca) return false;
@@ -140,11 +152,18 @@ async function chercherSignalements(supabase, lignes, eviterDangers) {
 }
 
 function chercherDirectesHorsLigne(depart, arrivee, lignes) {
+  const nomDep = normaliserCommune(depart.nom);
+  const nomArr = normaliserCommune(arrivee.nom);
   return lignes.filter((l) => {
+    if (l.confiance < 0) return false;
+    const parCommune = nomDep && nomArr
+      && normaliserCommune(l.depart_commune) === nomDep
+      && normaliserCommune(l.arrivee_commune) === nomArr;
+    if (parCommune) return true;
     const cd = coordsDepart(l);
     const ca = coordsArrivee(l);
     if (!cd || !ca) return false;
-    return l.confiance >= 0 && haversine(depart, cd) <= RAYON_DEPART && haversine(arrivee, ca) <= RAYON_ARRIVEE;
+    return haversine(depart, cd) <= RAYON_DEPART && haversine(arrivee, ca) <= RAYON_ARRIVEE;
   });
 }
 
@@ -194,27 +213,38 @@ export async function calculerItineraires(depart, arrivee, options = {}, context
 
   const lignesLocales = await getToutesLignesLocales();
 
+
   if (modeHorsLigne || !supabase) {
     toutesLignes = lignesLocales;
     directes = chercherDirectesHorsLigne(depart, arrivee, toutesLignes);
+
   } else {
     directes = await chercherDirectesEnLigne(depart, arrivee, supabase);
+
     const { data: all } = await supabase.from('lignes_fiables').select('*').gte('confiance', 0);
+
     const idsEnLigne = new Set((all || []).map((l) => l.nom_ligne));
     const localesUniques = lignesLocales.filter((l) => !idsEnLigne.has(l.nom_ligne));
+
     toutesLignes = [...(all || []), ...localesUniques];
     const directesLocales = chercherDirectesHorsLigne(depart, arrivee, lignesLocales);
+
     const idsDirectes = new Set(directes.map((l) => l.nom_ligne));
     directes = [...directes, ...directesLocales.filter((l) => !idsDirectes.has(l.nom_ligne))];
   }
 
+
+
   const exclus = await chercherSignalements(supabase, [...directes, ...toutesLignes], eviterDangers && !modeHorsLigne);
+
 
   const itinerairesDirects = directes
     .filter((l) => l.confiance >= 0 && !exclus.has(l.id))
     .map((l) => construireDirecte(l, depart, arrivee));
 
   const itinerairesCorrespondance = chercherCorrespondances(depart, arrivee, toutesLignes.filter((l) => !exclus.has(l.id)));
+
+
 
   const tous = [...itinerairesDirects, ...itinerairesCorrespondance.slice(0, maxCorrespondances * 3)];
   tous.sort((a, b) => b.score - a.score);
