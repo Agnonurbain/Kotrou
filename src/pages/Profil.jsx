@@ -70,8 +70,11 @@ export default function Profil() {
   }
 
   const tel = profil?.telephone || '';
-  const telMasque = tel ? `${tel.slice(0, 7)}••••${tel.slice(-2)}` : '••••';
-  const initiales = tel ? tel.slice(4, 6) : '??';
+  const emailUser = utilisateur?.email || '';
+  const identifiant = emailUser || (tel ? `${tel.slice(0, 7)}••••${tel.slice(-2)}` : '••••');
+  const initiales = emailUser
+    ? emailUser.slice(0, 2).toUpperCase()
+    : tel ? tel.slice(4, 6) : '??';
   const debloques = badgesDebloques();
   const debloquesIds = new Set(debloques.map((b) => b.id));
 
@@ -88,7 +91,7 @@ export default function Profil() {
             {initiales}
           </div>
           <div>
-            <p className="text-sm font-semibold text-kotrou-gris">{telMasque}</p>
+            <p className="text-sm font-semibold text-kotrou-gris">{identifiant}</p>
             <p className="text-xs text-gray-400">Membre depuis {dateInscription(profil?.created_at)}</p>
           </div>
         </div>

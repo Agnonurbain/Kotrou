@@ -25,10 +25,27 @@ export function AuthProvider({ children }) {
       setEnAttente(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUtilisateur(session?.user || null);
-      if (session?.user) chargerProfil(session.user.id);
-      else setProfil(null);
+      if (session?.user) {
+        const { data: existant } = await supabase
+          .from('profils')
+          .select('id')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        if (!existant) {
+          await supabase.from('profils').insert({
+            id: session.user.id,
+            telephone: session.user.phone || '',
+            points: 0,
+            contributions: 0,
+            badges: [],
+          });
+        }
+        chargerProfil(session.user.id);
+      } else {
+        setProfil(null);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -58,28 +75,36 @@ export function AuthProvider({ children }) {
       type: 'sms',
     });
     if (error) throw error;
-
-    if (data.user) {
-      const { data: existant } = await supabase
-        .from('profils')
-        .select('id')
-        .eq('id', data.user.id)
-        .maybeSingle();
-
-      if (!existant) {
-        await supabase.from('profils').insert({
-          id: data.user.id,
-          telephone: tel,
-          points: 0,
-          contributions: 0,
-          badges: [],
-        });
-      }
-
-      await chargerProfil(data.user.id);
-    }
-
+    await creerProfilSiNouveau(data.user, tel);
     return data;
+  }, [chargerProfil]);
+
+  const envoyerMagicLink = useCallback(async (email) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (error) throw error;
+  }, []);
+
+  const creerProfilSiNouveau = useCallback(async (user, identifiant) => {
+    if (!user) return;
+    const { data: existant } = await supabase
+      .from('profils')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (!existant) {
+      await supabase.from('profils').insert({
+        id: user.id,
+        telephone: identifiant || '',
+        points: 0,
+        contributions: 0,
+        badges: [],
+      });
+    }
+    await chargerProfil(user.id);
   }, [chargerProfil]);
 
   const seDeconnecter = useCallback(async () => {
@@ -116,6 +141,7 @@ export function AuthProvider({ children }) {
     enAttente,
     envoyerOTP,
     verifierOTP,
+    envoyerMagicLink,
     seDeconnecter,
     rafraichirProfil,
     badgesDebloques,

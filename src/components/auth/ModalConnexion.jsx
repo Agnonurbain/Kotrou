@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { X, Phone, ArrowRight, Check } from 'lucide-react';
+import { X, Mail, Phone, ArrowRight, Check } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Bouton from '../ui/Bouton';
 
 export default function ModalConnexion() {
-  const { modalOuverte, fermerModal, envoyerOTP, verifierOTP } = useAuth();
+  const { modalOuverte, fermerModal, envoyerOTP, verifierOTP, envoyerMagicLink } = useAuth();
+  const [mode, setMode] = useState('email');
   const [etape, setEtape] = useState(1);
+  const [email, setEmail] = useState('');
   const [telephone, setTelephone] = useState('');
   const [telNormalise, setTelNormalise] = useState('');
   const [code, setCode] = useState(['', '', '', '', '', '']);
@@ -15,14 +17,17 @@ export default function ModalConnexion() {
 
   const inputsRef = useRef([]);
   const telRef = useRef(null);
+  const emailRef = useRef(null);
 
   useEffect(() => {
     if (modalOuverte) {
       setEtape(1);
+      setEmail('');
       setTelephone('');
       setCode(['', '', '', '', '', '']);
       setErreur('');
-      setTimeout(() => telRef.current?.focus(), 100);
+      setMode('email');
+      setTimeout(() => emailRef.current?.focus(), 100);
     }
   }, [modalOuverte]);
 
@@ -31,6 +36,27 @@ export default function ModalConnexion() {
     const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => clearTimeout(t);
   }, [countdown]);
+
+  const handleEnvoyerEmail = useCallback(async () => {
+    if (!email || !email.includes('@')) {
+      setErreur('Adresse email invalide');
+      return;
+    }
+    setEnvoi(true);
+    setErreur('');
+    try {
+      await envoyerMagicLink(email);
+      setEtape(3);
+    } catch (e) {
+      if (e.message?.includes('rate')) {
+        setErreur('Trop de tentatives. Réessaie dans quelques minutes.');
+      } else {
+        setErreur('Erreur lors de l\'envoi. Vérifie ton adresse.');
+      }
+    } finally {
+      setEnvoi(false);
+    }
+  }, [email, envoyerMagicLink]);
 
   const handleEnvoyerOTP = useCallback(async () => {
     const chiffres = telephone.replace(/\D/g, '');
@@ -131,32 +157,66 @@ export default function ModalConnexion() {
           <div className="space-y-5">
             <div className="text-center">
               <div className="w-14 h-14 bg-kotrou-orange/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Phone className="w-7 h-7 text-kotrou-orange" />
+                {mode === 'email'
+                  ? <Mail className="w-7 h-7 text-kotrou-orange" />
+                  : <Phone className="w-7 h-7 text-kotrou-orange" />}
               </div>
               <h2 className="text-lg font-bold text-kotrou-gris">Connexion</h2>
-              <p className="text-sm text-gray-400 mt-1">Entre ton numéro pour recevoir un code.</p>
+              <p className="text-sm text-gray-400 mt-1">
+                {mode === 'email'
+                  ? 'Entre ton email pour recevoir un lien de connexion.'
+                  : 'Entre ton numéro pour recevoir un code.'}
+              </p>
             </div>
 
-            <div className="flex gap-2">
-              <div className="w-16 h-12 flex items-center justify-center bg-gray-100 rounded-lg text-sm font-semibold text-kotrou-gris">
-                +225
-              </div>
+            {mode === 'email' ? (
               <input
-                ref={telRef}
-                type="tel"
-                value={telephone}
-                onChange={(e) => { setTelephone(e.target.value); setErreur(''); }}
-                onKeyDown={(e) => e.key === 'Enter' && handleEnvoyerOTP()}
-                placeholder="07 XX XX XX XX"
-                className="flex-1 h-12 px-3 rounded-lg border border-gray-300 text-base focus:outline-none focus:ring-2 focus:ring-kotrou-orange focus:border-transparent"
+                ref={emailRef}
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setErreur(''); }}
+                onKeyDown={(e) => e.key === 'Enter' && handleEnvoyerEmail()}
+                placeholder="ton.email@exemple.com"
+                className="w-full h-12 px-4 rounded-lg border border-gray-300 text-base focus:outline-none focus:ring-2 focus:ring-kotrou-orange focus:border-transparent"
               />
-            </div>
+            ) : (
+              <div className="flex gap-2">
+                <div className="w-16 h-12 flex items-center justify-center bg-gray-100 rounded-lg text-sm font-semibold text-kotrou-gris">
+                  +225
+                </div>
+                <input
+                  ref={telRef}
+                  type="tel"
+                  value={telephone}
+                  onChange={(e) => { setTelephone(e.target.value); setErreur(''); }}
+                  onKeyDown={(e) => e.key === 'Enter' && handleEnvoyerOTP()}
+                  placeholder="07 XX XX XX XX"
+                  className="flex-1 h-12 px-3 rounded-lg border border-gray-300 text-base focus:outline-none focus:ring-2 focus:ring-kotrou-orange focus:border-transparent"
+                />
+              </div>
+            )}
 
             {erreur && <p className="text-xs text-kotrou-rouge text-center">{erreur}</p>}
 
-            <Bouton fullWidth onClick={handleEnvoyerOTP} chargement={envoi} icone={<ArrowRight className="w-4 h-4" />}>
-              Recevoir le code
+            <Bouton
+              fullWidth
+              onClick={mode === 'email' ? handleEnvoyerEmail : handleEnvoyerOTP}
+              chargement={envoi}
+              icone={<ArrowRight className="w-4 h-4" />}
+            >
+              {mode === 'email' ? 'Recevoir le lien' : 'Recevoir le code'}
             </Bouton>
+
+            <button
+              onClick={() => {
+                setMode(mode === 'email' ? 'phone' : 'email');
+                setErreur('');
+                setTimeout(() => (mode === 'email' ? telRef : emailRef).current?.focus(), 100);
+              }}
+              className="w-full text-center text-sm text-kotrou-orange font-medium active:underline"
+            >
+              {mode === 'email' ? 'Utiliser mon numéro de téléphone' : 'Utiliser mon email'}
+            </button>
           </div>
         )}
 
@@ -201,6 +261,28 @@ export default function ModalConnexion() {
 
             <Bouton fullWidth onClick={handleVerifier} chargement={envoi} icone={<Check className="w-4 h-4" />}>
               Confirmer
+            </Bouton>
+          </div>
+        )}
+
+        {etape === 3 && (
+          <div className="space-y-5">
+            <div className="text-center">
+              <div className="w-14 h-14 bg-kotrou-vert/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Mail className="w-7 h-7 text-kotrou-vert" />
+              </div>
+              <h2 className="text-lg font-bold text-kotrou-gris">Vérifie ta boîte mail</h2>
+              <p className="text-sm text-gray-400 mt-2">
+                Un lien de connexion a été envoyé à
+              </p>
+              <p className="text-sm font-semibold text-kotrou-gris mt-1">{email}</p>
+              <p className="text-xs text-gray-400 mt-3">
+                Clique sur le lien dans l'email pour te connecter. Vérifie tes spams si tu ne le vois pas.
+              </p>
+            </div>
+
+            <Bouton fullWidth variante="secondaire" onClick={fermerModal}>
+              Compris
             </Bouton>
           </div>
         )}
