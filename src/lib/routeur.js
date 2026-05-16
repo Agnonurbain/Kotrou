@@ -1,5 +1,5 @@
 import { haversine, tempsMarche } from './distance';
-import { HUBS } from '../data/communes';
+import { COMMUNES, HUBS } from '../data/communes';
 import { getToutesLignesLocales } from './db-locale';
 
 const RAYON_DEPART = 3000;
@@ -25,8 +25,10 @@ function descriptionMarche(dist, destination) {
 }
 
 function construireDirecte(ligne, depart, arrivee) {
-  const distDepart = haversine(depart, coordsDepart(ligne));
-  const distArrivee = haversine(arrivee, coordsArrivee(ligne));
+  const cd = coordsDepart(ligne);
+  const ca = coordsArrivee(ligne);
+  const distDepart = cd ? haversine(depart, cd) : 0;
+  const distArrivee = ca ? haversine(arrivee, ca) : 0;
   const dureeDepReal = distDepart > SEUIL_MARCHE_WORO ? Math.ceil(distDepart / 300) : tempsMarche(distDepart);
   const dureeArrReal = distArrivee > SEUIL_MARCHE_WORO ? Math.ceil(distArrivee / 300) : tempsMarche(distArrivee);
   const etapes = [
@@ -40,8 +42,10 @@ function construireDirecte(ligne, depart, arrivee) {
 }
 
 function construireCorrespondance(l1, l2, hub, depart, arrivee) {
-  const distDepart = haversine(depart, coordsDepart(l1));
-  const distArrivee = haversine(arrivee, coordsArrivee(l2));
+  const cd1 = coordsDepart(l1);
+  const ca2 = coordsArrivee(l2);
+  const distDepart = cd1 ? haversine(depart, cd1) : 0;
+  const distArrivee = ca2 ? haversine(arrivee, ca2) : 0;
   const dureeDepReal = distDepart > SEUIL_MARCHE_WORO ? Math.ceil(distDepart / 300) : tempsMarche(distDepart);
   const dureeArrReal = distArrivee > SEUIL_MARCHE_WORO ? Math.ceil(distArrivee / 300) : tempsMarche(distArrivee);
   const etapes = [
@@ -90,6 +94,50 @@ function normaliserCommune(nom) {
   return nom.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
 }
 
+function trouverCommune(point) {
+  if (!point) return null;
+  if (point.nom) {
+    const norm = normaliserCommune(point.nom);
+    const parNom = COMMUNES.find((c) => normaliserCommune(c.nom) === norm);
+    if (parNom) return parNom.id;
+    const parQuartier = COMMUNES.find((c) =>
+      point.nom.toLowerCase().includes(c.nom.toLowerCase())
+    );
+    if (parQuartier) return parQuartier.id;
+  }
+  if (point.lat != null && point.lng != null) {
+    for (const c of COMMUNES) {
+      if (
+        point.lat >= c.bbox.minLat && point.lat <= c.bbox.maxLat &&
+        point.lng >= c.bbox.minLng && point.lng <= c.bbox.maxLng
+      ) return c.id;
+    }
+  }
+  return null;
+}
+
+function matchCommune(ligne, communeDep, communeArr) {
+  if (!communeDep || !communeArr) return false;
+  return normaliserCommune(ligne.depart_commune) === communeDep
+    && normaliserCommune(ligne.arrivee_commune) === communeArr;
+}
+
+function matchDistance(ligne, depart, arrivee) {
+  const cd = coordsDepart(ligne);
+  const ca = coordsArrivee(ligne);
+  if (!cd || !ca) return false;
+  return haversine(depart, cd) <= RAYON_DEPART && haversine(arrivee, ca) <= RAYON_ARRIVEE;
+}
+
+function chercherDirectes(depart, arrivee, lignes) {
+  const communeDep = trouverCommune(depart);
+  const communeArr = trouverCommune(arrivee);
+  return lignes.filter((l) => {
+    if (l.confiance < 0) return false;
+    return matchCommune(l, communeDep, communeArr) || matchDistance(l, depart, arrivee);
+  });
+}
+
 async function chercherDirectesEnLigne(depart, arrivee, supabase) {
   const { data, error } = await supabase.rpc('chercher_lignes_directes', {
     lng_dep: depart.lng,
@@ -105,19 +153,7 @@ async function chercherDirectesEnLigne(depart, arrivee, supabase) {
       .from('lignes_fiables')
       .select('*')
       .gte('confiance', 0);
-    if (!fallback) return [];
-    const nomDep = normaliserCommune(depart.nom);
-    const nomArr = normaliserCommune(arrivee.nom);
-    return fallback.filter((l) => {
-      const parCommune = nomDep && nomArr
-        && normaliserCommune(l.depart_commune) === nomDep
-        && normaliserCommune(l.arrivee_commune) === nomArr;
-      if (parCommune) return true;
-      const cd = coordsDepart(l);
-      const ca = coordsArrivee(l);
-      if (!cd || !ca) return false;
-      return haversine(depart, cd) <= RAYON_DEPART && haversine(arrivee, ca) <= RAYON_ARRIVEE;
-    });
+    return chercherDirectes(depart, arrivee, fallback || []);
   }
 
   return data;
@@ -151,36 +187,25 @@ async function chercherSignalements(supabase, lignes, eviterDangers) {
   return exclus;
 }
 
-function chercherDirectesHorsLigne(depart, arrivee, lignes) {
-  const nomDep = normaliserCommune(depart.nom);
-  const nomArr = normaliserCommune(arrivee.nom);
-  return lignes.filter((l) => {
-    if (l.confiance < 0) return false;
-    const parCommune = nomDep && nomArr
-      && normaliserCommune(l.depart_commune) === nomDep
-      && normaliserCommune(l.arrivee_commune) === nomArr;
-    if (parCommune) return true;
-    const cd = coordsDepart(l);
-    const ca = coordsArrivee(l);
-    if (!cd || !ca) return false;
-    return haversine(depart, cd) <= RAYON_DEPART && haversine(arrivee, ca) <= RAYON_ARRIVEE;
-  });
-}
-
 function chercherCorrespondances(depart, arrivee, lignes) {
+  const communeDep = trouverCommune(depart);
+  const communeArr = trouverCommune(arrivee);
   const resultats = [];
   for (const hub of HUBS) {
+    const hubCommune = normaliserCommune(hub.nom);
     const seg1 = lignes.filter((l) => {
-      const cd = coordsDepart(l);
-      const ca = coordsArrivee(l);
-      if (!cd || !ca) return false;
-      return l.confiance >= 0 && haversine(depart, cd) <= RAYON_DEPART && haversine(ca, hub.coords) <= RAYON_HUB;
+      if (l.confiance < 0) return false;
+      const depOk = (communeDep && normaliserCommune(l.depart_commune) === communeDep)
+        || (coordsDepart(l) && haversine(depart, coordsDepart(l)) <= RAYON_DEPART);
+      const arrHub = (coordsArrivee(l) && haversine(coordsArrivee(l), hub.coords) <= RAYON_HUB);
+      return depOk && arrHub;
     });
     const seg2 = lignes.filter((l) => {
-      const cd = coordsDepart(l);
-      const ca = coordsArrivee(l);
-      if (!cd || !ca) return false;
-      return l.confiance >= 0 && haversine(cd, hub.coords) <= RAYON_HUB && haversine(arrivee, ca) <= RAYON_ARRIVEE;
+      if (l.confiance < 0) return false;
+      const depHub = (coordsDepart(l) && haversine(coordsDepart(l), hub.coords) <= RAYON_HUB);
+      const arrOk = (communeArr && normaliserCommune(l.arrivee_commune) === communeArr)
+        || (coordsArrivee(l) && haversine(arrivee, coordsArrivee(l)) <= RAYON_ARRIVEE);
+      return depHub && arrOk;
     });
     for (const l1 of seg1) {
       for (const l2 of seg2) {
@@ -213,38 +238,27 @@ export async function calculerItineraires(depart, arrivee, options = {}, context
 
   const lignesLocales = await getToutesLignesLocales();
 
-
   if (modeHorsLigne || !supabase) {
     toutesLignes = lignesLocales;
-    directes = chercherDirectesHorsLigne(depart, arrivee, toutesLignes);
-
+    directes = chercherDirectes(depart, arrivee, toutesLignes);
   } else {
     directes = await chercherDirectesEnLigne(depart, arrivee, supabase);
-
     const { data: all } = await supabase.from('lignes_fiables').select('*').gte('confiance', 0);
-
     const idsEnLigne = new Set((all || []).map((l) => l.nom_ligne));
     const localesUniques = lignesLocales.filter((l) => !idsEnLigne.has(l.nom_ligne));
-
     toutesLignes = [...(all || []), ...localesUniques];
-    const directesLocales = chercherDirectesHorsLigne(depart, arrivee, lignesLocales);
-
+    const directesLocales = chercherDirectes(depart, arrivee, lignesLocales);
     const idsDirectes = new Set(directes.map((l) => l.nom_ligne));
     directes = [...directes, ...directesLocales.filter((l) => !idsDirectes.has(l.nom_ligne))];
   }
 
-
-
   const exclus = await chercherSignalements(supabase, [...directes, ...toutesLignes], eviterDangers && !modeHorsLigne);
-
 
   const itinerairesDirects = directes
     .filter((l) => l.confiance >= 0 && !exclus.has(l.id))
     .map((l) => construireDirecte(l, depart, arrivee));
 
   const itinerairesCorrespondance = chercherCorrespondances(depart, arrivee, toutesLignes.filter((l) => !exclus.has(l.id)));
-
-
 
   const tous = [...itinerairesDirects, ...itinerairesCorrespondance.slice(0, maxCorrespondances * 3)];
   tous.sort((a, b) => b.score - a.score);
