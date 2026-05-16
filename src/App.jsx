@@ -1,5 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
-import { fr } from './i18n/fr';
+import { Routes, Route, Outlet } from 'react-router-dom';
 import BottomNav from './components/layout/BottomNav';
 import ModalConnexion from './components/auth/ModalConnexion';
 import Debug from './pages/Debug';
@@ -14,6 +13,17 @@ import TrajetsFavoris from './pages/TrajetsFavoris';
 import Partage from './pages/Partage';
 import Parametres from './pages/Parametres';
 
+function LayoutAvecNav() {
+  return (
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <BottomNav />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <div className="max-w-md mx-auto min-h-screen bg-kotrou-fond">
@@ -26,19 +36,12 @@ export default function App() {
         <Route path="/t/:code" element={<Partage />} />
         <Route path="/trajet/:code" element={<Partage />} />
         <Route path="/parametres" element={<Parametres />} />
-        <Route path="*" element={
-          <div className="flex flex-col min-h-screen">
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<Accueil />} />
-                <Route path="/explorer" element={<Explorateur />} />
-                <Route path="/contribuer" element={<Contribution />} />
-                <Route path="/profil" element={<Profil />} />
-              </Routes>
-            </main>
-            <BottomNav />
-          </div>
-        } />
+        <Route element={<LayoutAvecNav />}>
+          <Route path="/" element={<Accueil />} />
+          <Route path="/explorer" element={<Explorateur />} />
+          <Route path="/contribuer" element={<Contribution />} />
+          <Route path="/profil" element={<Profil />} />
+        </Route>
       </Routes>
       <ModalConnexion />
     </div>

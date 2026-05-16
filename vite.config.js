@@ -14,7 +14,7 @@ export default defineConfig({
         importScripts: ['/sw-notifications.js'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.protomaps\.com\/tiles/,
+            urlPattern: /^https:\/\/tile\.openstreetmap\.org/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'map-tiles',
@@ -44,14 +44,6 @@ export default defineConfig({
             options: {
               cacheName: 'supabase-photos',
               expiration: { maxEntries: 200, maxAgeSeconds: 7 * 24 * 60 * 60 },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/protomaps\.github\.io/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'map-fonts',
-              expiration: { maxEntries: 50, maxAgeSeconds: 30 * 24 * 60 * 60 },
             },
           },
         ],

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, ChevronLeft, Check, Camera, X } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Check, Camera, X, Plus, Bus, Footprints } from 'lucide-react';
 import { fr } from '../i18n/fr';
 import { supabase } from '../supabase';
 import { COMMUNES } from '../data/communes';
@@ -20,6 +20,22 @@ function quartiersOptions(communeId) {
   return (QUARTIERS[communeId] || []).map((q) => ({ valeur: q, libelle: q }));
 }
 
+function creerSegment(communeDep = '', quartierDep = '') {
+  return {
+    type: 'woro',
+    communeDep,
+    quartierDep,
+    gareDep: '',
+    reperes: '',
+    nomLigne: '',
+    communeArr: '',
+    prix: '',
+    duree: '',
+    horaireDebut: '05:00',
+    horaireFin: '22:00',
+  };
+}
+
 export default function Contribution() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
@@ -27,60 +43,59 @@ export default function Contribution() {
   const communeInit = params.get('commune') || '';
   const quartierInit = params.get('quartier') || '';
 
+  const [segments, setSegments] = useState([creerSegment(communeInit, quartierInit)]);
+  const [indexActif, setIndexActif] = useState(0);
   const [etape, setEtape] = useState(1);
   const [envoi, setEnvoi] = useState(false);
   const [toast, setToast] = useState(null);
   const [erreurs, setErreurs] = useState({});
 
-  const [type, setType] = useState('gbaka');
-  const [communeDep, setCommuneDep] = useState(communeInit);
-  const [quartierDep, setQuartierDep] = useState(quartierInit);
-  const [gareDep, setGareDep] = useState('');
-  const [reperes, setReperes] = useState('');
-
-  const [nomLigne, setNomLigne] = useState('');
-  const [communeArr, setCommuneArr] = useState('');
-  const [prix, setPrix] = useState('');
-  const [duree, setDuree] = useState('');
-  const [horaireDebut, setHoraireDebut] = useState('05:00');
-  const [horaireFin, setHoraireFin] = useState('22:00');
-
   const [photo, setPhoto] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+
+  const seg = segments[indexActif];
+
+  const majSegment = (champ, valeur) => {
+    setSegments((prev) => prev.map((s, i) =>
+      i === indexActif ? { ...s, [champ]: valeur } : s
+    ));
+  };
 
   useEffect(() => {
     if (!ligneIdEdit) return;
     supabase.from('lignes').select('*').eq('id', ligneIdEdit).single().then(({ data }) => {
       if (!data) return;
-      setType(data.type || 'gbaka');
-      setCommuneDep(data.depart_commune || '');
-      setQuartierDep(data.depart_quartier || '');
-      setGareDep(data.depart_gare || '');
-      setReperes(data.depart_reperes || '');
-      setNomLigne(data.nom_ligne || '');
-      setCommuneArr(data.arrivee_commune || '');
-      setPrix(data.prix ? String(data.prix) : '');
-      setDuree(data.duree ? String(data.duree) : '');
-      setHoraireDebut(data.horaire_debut?.slice(0, 5) || '05:00');
-      setHoraireFin(data.horaire_fin?.slice(0, 5) || '22:00');
+      setSegments([{
+        type: data.type || 'gbaka',
+        communeDep: data.depart_commune || '',
+        quartierDep: data.depart_quartier || '',
+        gareDep: data.depart_gare || '',
+        reperes: data.depart_reperes || '',
+        nomLigne: data.nom_ligne || '',
+        communeArr: data.arrivee_commune || '',
+        prix: data.prix ? String(data.prix) : '',
+        duree: data.duree ? String(data.duree) : '',
+        horaireDebut: data.horaire_debut?.slice(0, 5) || '05:00',
+        horaireFin: data.horaire_fin?.slice(0, 5) || '22:00',
+      }]);
     });
   }, [ligneIdEdit]);
 
   const validerEtape1 = () => {
     const e = {};
-    if (!communeDep) e.communeDep = fr.erreurs.champ_requis;
-    if (!quartierDep) e.quartierDep = fr.erreurs.champ_requis;
-    if (!gareDep.trim()) e.gareDep = fr.erreurs.champ_requis;
+    if (!seg.communeDep) e.communeDep = fr.erreurs.champ_requis;
+    if (!seg.quartierDep) e.quartierDep = fr.erreurs.champ_requis;
+    if (!seg.gareDep.trim()) e.gareDep = fr.erreurs.champ_requis;
     setErreurs(e);
     return Object.keys(e).length === 0;
   };
 
   const validerEtape2 = () => {
     const e = {};
-    if (!nomLigne.trim()) e.nomLigne = fr.erreurs.champ_requis;
-    if (!communeArr) e.communeArr = fr.erreurs.champ_requis;
-    const p = parseInt(prix, 10);
-    if (!prix || isNaN(p) || p < 50 || p > 2000) e.prix = fr.erreurs.prix_invalide;
+    if (!seg.nomLigne.trim()) e.nomLigne = fr.erreurs.champ_requis;
+    if (!seg.communeArr) e.communeArr = fr.erreurs.champ_requis;
+    const p = parseInt(seg.prix, 10);
+    if (!seg.prix || isNaN(p) || p < 50 || p > 2000) e.prix = fr.erreurs.prix_invalide;
     setErreurs(e);
     return Object.keys(e).length === 0;
   };
@@ -92,7 +107,35 @@ export default function Contribution() {
 
   const precedent = () => {
     setErreurs({});
-    setEtape((e) => Math.max(1, e - 1));
+    if (etape === 1 && indexActif > 0) {
+      setSegments((prev) => prev.slice(0, -1));
+      setIndexActif(indexActif - 1);
+      setEtape(3);
+    } else {
+      setEtape((e) => Math.max(1, e - 1));
+    }
+  };
+
+  const ajouterCorrespondance = () => {
+    const nouveau = creerSegment(seg.communeArr, '');
+    setSegments((prev) => [...prev, nouveau]);
+    setIndexActif(segments.length);
+    setErreurs({});
+    setEtape(1);
+  };
+
+  const supprimerSegment = (index) => {
+    if (segments.length <= 1) return;
+    const next = segments.filter((_, i) => i !== index);
+    setSegments(next);
+    setIndexActif(0);
+    setEtape(3);
+  };
+
+  const modifierSegment = (index) => {
+    setIndexActif(index);
+    setEtape(1);
+    setErreurs({});
   };
 
   const handlePhoto = (e) => {
@@ -111,40 +154,40 @@ export default function Contribution() {
 
     setEnvoi(true);
     try {
-      const communeDepObj = COMMUNES.find((c) => c.id === communeDep);
-      const communeArrObj = COMMUNES.find((c) => c.id === communeArr);
+      const lignesAInserer = segments.map((s) => {
+        const communeDepObj = COMMUNES.find((c) => c.id === s.communeDep);
+        const communeArrObj = COMMUNES.find((c) => c.id === s.communeArr);
+        return {
+          nom_ligne: s.nomLigne.trim(),
+          type: s.type,
+          depart_commune: s.communeDep,
+          depart_quartier: s.quartierDep,
+          depart_gare: s.gareDep.trim(),
+          depart_reperes: s.reperes.trim() || null,
+          depart_coords: communeDepObj ? `POINT(${communeDepObj.centre.lng} ${communeDepObj.centre.lat})` : null,
+          arrivee_commune: s.communeArr,
+          arrivee_coords: communeArrObj ? `POINT(${communeArrObj.centre.lng} ${communeArrObj.centre.lat})` : null,
+          prix: parseInt(s.prix, 10),
+          duree: s.duree ? parseInt(s.duree, 10) : null,
+          horaire_debut: s.horaireDebut || '05:00',
+          horaire_fin: s.horaireFin || '22:00',
+          confiance: 1,
+          source: 'communaute',
+          contributeur_id: user.id,
+        };
+      });
 
-      const donnees = {
-        nom_ligne: nomLigne.trim(),
-        type,
-        depart_commune: communeDep,
-        depart_quartier: quartierDep,
-        depart_gare: gareDep.trim(),
-        depart_reperes: reperes.trim() || null,
-        depart_coords: communeDepObj ? `POINT(${communeDepObj.centre.lng} ${communeDepObj.centre.lat})` : null,
-        arrivee_commune: communeArr,
-        arrivee_coords: communeArrObj ? `POINT(${communeArrObj.centre.lng} ${communeArrObj.centre.lat})` : null,
-        prix: parseInt(prix, 10),
-        duree: duree ? parseInt(duree, 10) : null,
-        horaire_debut: horaireDebut || '05:00',
-        horaire_fin: horaireFin || '22:00',
-        confiance: 1,
-        source: 'communaute',
-        contributeur_id: user.id,
-      };
-
-      const { data: nouvelleLigne, error } = await supabase
+      const { data: nouvelles, error } = await supabase
         .from('lignes')
-        .insert(donnees)
-        .select()
-        .single();
+        .insert(lignesAInserer)
+        .select();
 
       if (error) throw error;
 
-      if (photo && nouvelleLigne) {
+      if (photo && nouvelles?.[0]) {
         try {
-          const photoUrl = await uploaderPhoto(photo, nouvelleLigne.id);
-          await supabase.from('lignes').update({ photo_url: photoUrl }).eq('id', nouvelleLigne.id);
+          const photoUrl = await uploaderPhoto(photo, nouvelles[0].id);
+          await supabase.from('lignes').update({ photo_url: photoUrl }).eq('id', nouvelles[0].id);
         } catch {
           // photo upload non bloquant
         }
@@ -157,39 +200,60 @@ export default function Contribution() {
     } finally {
       setEnvoi(false);
     }
-  }, [type, communeDep, quartierDep, gareDep, reperes, nomLigne, communeArr, prix, duree, horaireDebut, horaireFin, photo, navigate]);
+  }, [segments, photo, navigate]);
 
   const nomCommune = (id) => COMMUNES.find((c) => c.id === id)?.nom || id;
 
+  const estRecap = etape === 3;
+  const nbSegments = segments.length;
+  const titreHeader = ligneIdEdit
+    ? 'Corriger une ligne'
+    : estRecap
+      ? fr.contribution.titre
+      : nbSegments > 1
+        ? `Segment ${indexActif + 1}/${nbSegments}`
+        : fr.contribution.titre;
+
   return (
     <div className="max-w-md mx-auto min-h-screen bg-kotrou-fond pb-20">
-      <Header titre={ligneIdEdit ? 'Corriger une ligne' : fr.contribution.titre} retour />
+      <Header titre={titreHeader} retour={ligneIdEdit ? true : false} />
 
       <div className="px-4 pt-4">
-        <div className="flex items-center gap-2 mb-6">
-          {[1, 2, 3].map((s) => (
-            <div key={s} className="flex items-center flex-1 gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
-                s <= etape ? 'bg-kotrou-orange text-white' : 'bg-gray-200 text-gray-400'
-              }`}>
-                {s < etape ? <Check className="w-4 h-4" /> : s}
+        {!estRecap && (
+          <div className="flex items-center gap-2 mb-6">
+            {[1, 2].map((s) => (
+              <div key={s} className="flex items-center flex-1 gap-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
+                  s <= etape ? 'bg-kotrou-orange text-white' : 'bg-gray-200 text-gray-400'
+                }`}>
+                  {s < etape ? <Check className="w-4 h-4" /> : s}
+                </div>
+                {s < 2 && <div className={`flex-1 h-0.5 ${s < etape ? 'bg-kotrou-orange' : 'bg-gray-200'}`} />}
               </div>
-              {s < 3 && <div className={`flex-1 h-0.5 ${s < etape ? 'bg-kotrou-orange' : 'bg-gray-200'}`} />}
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {etape === 1 && (
           <div className="space-y-4">
+            {indexActif > 0 && (
+              <div className="bg-kotrou-50 border border-kotrou-200 rounded-xl p-3 flex items-center gap-2">
+                <Footprints className="w-4 h-4 text-kotrou-orange shrink-0" />
+                <p className="text-xs text-kotrou-gris">
+                  Correspondance depuis <span className="font-semibold">{nomCommune(seg.communeDep)}</span>
+                </p>
+              </div>
+            )}
+
             <div>
               <p className="text-sm font-medium text-kotrou-gris mb-2">Type de transport *</p>
               <div className="flex gap-2">
                 {TYPES.map((t) => (
                   <button
                     key={t}
-                    onClick={() => setType(t)}
+                    onClick={() => majSegment('type', t)}
                     className={`flex-1 py-3 rounded-xl border-2 transition-colors min-h-[48px] ${
-                      type === t ? 'border-kotrou-orange bg-kotrou-50' : 'border-gray-200 bg-white'
+                      seg.type === t ? 'border-kotrou-orange bg-kotrou-50' : 'border-gray-200 bg-white'
                     }`}
                   >
                     <div className="flex justify-center">
@@ -204,17 +268,17 @@ export default function Contribution() {
               label={fr.contribution.commune_dep + ' *'}
               placeholder="Choisir"
               options={COMMUNES_OPTIONS}
-              valeur={communeDep}
-              onChange={(v) => { setCommuneDep(v); setQuartierDep(''); }}
+              valeur={seg.communeDep}
+              onChange={(v) => { majSegment('communeDep', v); majSegment('quartierDep', ''); }}
               erreur={erreurs.communeDep}
             />
-            {communeDep && (
+            {seg.communeDep && (
               <ListeDeroulante
                 label={fr.contribution.quartier_dep + ' *'}
                 placeholder="Choisir"
-                options={quartiersOptions(communeDep)}
-                valeur={quartierDep}
-                onChange={setQuartierDep}
+                options={quartiersOptions(seg.communeDep)}
+                valeur={seg.quartierDep}
+                onChange={(v) => majSegment('quartierDep', v)}
                 erreur={erreurs.quartierDep}
               />
             )}
@@ -222,8 +286,8 @@ export default function Contribution() {
               label={fr.contribution.gare_dep + ' *'}
               placeholder="Ex : Pharmacie Sainte-Marie"
               aide="Comment s'appelle cet arrêt ?"
-              valeur={gareDep}
-              onChange={setGareDep}
+              valeur={seg.gareDep}
+              onChange={(v) => majSegment('gareDep', v)}
               erreur={erreurs.gareDep}
               obligatoire
             />
@@ -231,13 +295,20 @@ export default function Contribution() {
               label={fr.contribution.reperes}
               placeholder="Ex : au feu de Kouté, devant la pharmacie"
               aide="Comment reconnaître cet arrêt ?"
-              valeur={reperes}
-              onChange={setReperes}
+              valeur={seg.reperes}
+              onChange={(v) => majSegment('reperes', v)}
             />
 
-            <Bouton fullWidth onClick={suivant} icone={<ChevronRight className="w-4 h-4" />}>
-              Suivant
-            </Bouton>
+            <div className="flex gap-3">
+              {indexActif > 0 && (
+                <Bouton variante="ghost" onClick={precedent} icone={<ChevronLeft className="w-4 h-4" />}>
+                  Précédent
+                </Bouton>
+              )}
+              <Bouton fullWidth onClick={suivant} icone={<ChevronRight className="w-4 h-4" />}>
+                Suivant
+              </Bouton>
+            </div>
           </div>
         )}
 
@@ -247,8 +318,8 @@ export default function Contribution() {
               label={fr.contribution.nom_ligne + ' *'}
               placeholder="Ex : Siporex, Adjamé-Liberté"
               aide="Ce que crie le coxeur"
-              valeur={nomLigne}
-              onChange={setNomLigne}
+              valeur={seg.nomLigne}
+              onChange={(v) => majSegment('nomLigne', v)}
               erreur={erreurs.nomLigne}
               obligatoire
             />
@@ -256,8 +327,8 @@ export default function Contribution() {
               label={fr.contribution.destination + ' *'}
               placeholder="Choisir"
               options={COMMUNES_OPTIONS}
-              valeur={communeArr}
-              onChange={setCommuneArr}
+              valeur={seg.communeArr}
+              onChange={(v) => majSegment('communeArr', v)}
               erreur={erreurs.communeArr}
             />
             <ChampTexte
@@ -265,8 +336,8 @@ export default function Contribution() {
               placeholder="200"
               type="number"
               aide="Le prix habituel (entre 50 et 2000 FCFA)"
-              valeur={prix}
-              onChange={setPrix}
+              valeur={seg.prix}
+              onChange={(v) => majSegment('prix', v)}
               erreur={erreurs.prix}
               obligatoire
             />
@@ -274,12 +345,12 @@ export default function Contribution() {
               label="Durée estimée (min)"
               placeholder="20"
               type="number"
-              valeur={duree}
-              onChange={setDuree}
+              valeur={seg.duree}
+              onChange={(v) => majSegment('duree', v)}
             />
             <div className="grid grid-cols-2 gap-3">
-              <ChampTexte label="Début" type="time" valeur={horaireDebut} onChange={setHoraireDebut} />
-              <ChampTexte label="Fin" type="time" valeur={horaireFin} onChange={setHoraireFin} />
+              <ChampTexte label="Début" type="time" valeur={seg.horaireDebut} onChange={(v) => majSegment('horaireDebut', v)} />
+              <ChampTexte label="Fin" type="time" valeur={seg.horaireFin} onChange={(v) => majSegment('horaireFin', v)} />
             </div>
 
             <div className="flex gap-3">
@@ -293,8 +364,83 @@ export default function Contribution() {
           </div>
         )}
 
-        {etape === 3 && (
+        {estRecap && (
           <div className="space-y-4">
+            {segments.map((s, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-kotrou-orange text-white flex items-center justify-center text-xs font-bold">
+                      {i + 1}
+                    </div>
+                    <BadgeTransport type={s.type} />
+                    <span className="text-sm font-semibold text-kotrou-gris">{s.nomLigne || '—'}</span>
+                  </div>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => modifierSegment(i)}
+                      className="text-xs text-kotrou-orange font-medium px-2 py-1 rounded-lg active:bg-kotrou-50"
+                    >
+                      Modifier
+                    </button>
+                    {segments.length > 1 && (
+                      <button
+                        onClick={() => supprimerSegment(i)}
+                        className="text-xs text-red-500 font-medium px-2 py-1 rounded-lg active:bg-red-50"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-1 text-sm text-kotrou-gris">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Départ</span>
+                    <span className="font-medium text-right">{s.gareDep}, {nomCommune(s.communeDep)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Arrivée</span>
+                    <span className="font-medium">{nomCommune(s.communeArr)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Prix</span>
+                    <span className="font-bold text-kotrou-orange">{s.prix} {fr.itineraire.fcfa}</span>
+                  </div>
+                  {s.duree && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Durée</span>
+                      <span className="font-medium">{s.duree} min</span>
+                    </div>
+                  )}
+                </div>
+
+                {i < segments.length - 1 && (
+                  <div className="flex items-center gap-2 pt-2 text-gray-400">
+                    <Footprints className="w-3.5 h-3.5" />
+                    <span className="text-xs">Correspondance à {nomCommune(s.communeArr)}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {segments.length > 1 && (
+              <div className="bg-kotrou-50 rounded-xl p-3 flex items-center justify-between">
+                <span className="text-sm text-kotrou-gris font-medium">Prix total</span>
+                <span className="text-lg font-bold text-kotrou-orange">
+                  {segments.reduce((sum, s) => sum + (parseInt(s.prix, 10) || 0), 0)} {fr.itineraire.fcfa}
+                </span>
+              </div>
+            )}
+
+            <Bouton
+              variante="secondaire"
+              fullWidth
+              icone={<Plus className="w-4 h-4" />}
+              onClick={ajouterCorrespondance}
+            >
+              Ajouter une correspondance
+            </Bouton>
+
             <div>
               <p className="text-sm font-medium text-kotrou-gris mb-2">Photo de la gare (optionnel)</p>
               {previewUrl ? (
@@ -316,44 +462,8 @@ export default function Contribution() {
               )}
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-2">
-              <p className="text-xs font-semibold text-gray-400 uppercase">Récapitulatif</p>
-              <div className="space-y-1.5 text-sm text-kotrou-gris">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Type</span>
-                  <BadgeTransport type={type} />
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Ligne</span>
-                  <span className="font-medium">{nomLigne || '—'}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Départ</span>
-                  <span className="font-medium text-right">{gareDep}, {nomCommune(communeDep)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Arrivée</span>
-                  <span className="font-medium">{nomCommune(communeArr)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Prix</span>
-                  <span className="font-bold text-kotrou-orange">{prix} {fr.itineraire.fcfa}</span>
-                </div>
-                {duree && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Durée</span>
-                    <span className="font-medium">{duree} min</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Horaires</span>
-                  <span className="font-medium">{horaireDebut} – {horaireFin}</span>
-                </div>
-              </div>
-            </div>
-
             <div className="flex gap-3">
-              <Bouton variante="ghost" onClick={precedent} icone={<ChevronLeft className="w-4 h-4" />}>
+              <Bouton variante="ghost" onClick={() => { setEtape(2); setIndexActif(segments.length - 1); }} icone={<ChevronLeft className="w-4 h-4" />}>
                 Précédent
               </Bouton>
               <Bouton fullWidth onClick={soumettre} chargement={envoi} icone={<Check className="w-4 h-4" />}>

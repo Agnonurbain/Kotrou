@@ -25,8 +25,8 @@ describe('calculerItineraires (hors-ligne avec seed)', () => {
   });
 
   it('2. retourne un itineraire avec correspondance via Adjame', async () => {
-    const depart = { lat: 5.3480, lng: -4.0610 };
-    const arrivee = { lat: 5.3680, lng: -3.9770 };
+    const depart = { lat: 5.2560, lng: -3.9350 };
+    const arrivee = { lat: 5.4200, lng: -4.0150 };
     const resultats = await calculerItineraires(depart, arrivee, { maxResultats: 10 }, { modeHorsLigne: true });
     const avecCorresp = resultats.filter((r) => !r.direct);
     expect(avecCorresp.length).toBeGreaterThan(0);
@@ -147,8 +147,12 @@ describe('calculerItineraires (hors-ligne avec seed)', () => {
     const resultats = await calculerItineraires(depart, arrivee, {}, { modeHorsLigne: true });
     expect(resultats.length).toBeGreaterThan(0);
     const avecNull = resultats.find((r) => r.etapes.some((e) => e.ligne?.prix === null));
-    if (avecNull) {
-      expect(avecNull.prixTotal).toBe(0);
-    }
+    expect(avecNull).toBeDefined();
+    const etapeNull = avecNull.etapes.find((e) => e.ligne?.prix === null);
+    expect(etapeNull.prix).toBeNull();
+    const prixSansNull = avecNull.etapes
+      .filter((e) => e.ligne?.prix !== null)
+      .reduce((s, e) => s + (e.prix ?? 0), 0);
+    expect(avecNull.prixTotal).toBe(prixSansNull);
   });
 });

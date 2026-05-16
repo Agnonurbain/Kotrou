@@ -73,7 +73,7 @@ export default function Explorateur() {
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-kotrou-fond pb-20">
-      <Header titre={titre} retour={!!(commune || quartier)} />
+      <Header titre={titre} retour={(commune || quartier) ? retour : false} />
 
       <div className="p-4">
         {!commune && (

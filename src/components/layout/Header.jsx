@@ -8,7 +8,7 @@ export default function Header({ titre, retour, action }) {
     <header className="sticky top-0 z-50 bg-kotrou-orange text-white h-14 flex items-center px-3 gap-2">
       {retour && (
         <button
-          onClick={() => navigate(-1)}
+          onClick={typeof retour === 'function' ? retour : () => navigate(-1)}
           className="w-11 h-11 flex items-center justify-center -ml-1 rounded-full active:bg-white/20 transition-colors"
         >
           <ChevronLeft className="w-6 h-6" />

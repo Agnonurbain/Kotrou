@@ -21,7 +21,7 @@ export default function BottomNav() {
           return (
             <button
               key={chemin}
-              onClick={() => navigate(chemin)}
+              onClick={() => navigate(chemin, { replace: true })}
               className={`flex-1 flex flex-col items-center justify-center gap-1 min-h-[44px] transition-colors active:bg-gray-50 ${
                 actif ? 'text-kotrou-orange' : 'text-gray-400'
               }`}

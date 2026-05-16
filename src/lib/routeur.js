@@ -2,10 +2,10 @@ import { haversine, tempsMarche } from './distance';
 import { HUBS } from '../data/communes';
 import { getToutesLignesLocales } from './db-locale';
 
-const RAYON_DEPART = 800;
-const RAYON_HUB = 1500;
-const RAYON_ARRIVEE = 800;
-const RAYON_DANGER = 300;
+const RAYON_DEPART = 10000;
+const RAYON_HUB = 10000;
+const RAYON_ARRIVEE = 10000;
+const RAYON_DANGER = 500;
 
 function milieu(a, b) {
   return { lat: (a.lat + b.lat) / 2, lng: (a.lng + b.lng) / 2 };
@@ -46,16 +46,32 @@ function construireCorrespondance(l1, l2, hub, depart, arrivee) {
   return { etapes, prixTotal, dureeTotal, fiabilite, score: scorer(prixTotal, dureeTotal, fiabilite), direct: false, hub: hub.nom };
 }
 
-function coordsDepart(l) {
-  if (l.depart_coords?.lat != null) return l.depart_coords;
-  if (l.depart_coords?.coordinates) return { lng: l.depart_coords.coordinates[0], lat: l.depart_coords.coordinates[1] };
+function parseWkbHex(hex) {
+  if (!hex || typeof hex !== 'string' || hex.length < 50) return null;
+  const buf = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) buf[i / 2] = parseInt(hex.substr(i, 2), 16);
+  const view = new DataView(buf.buffer);
+  const le = buf[0] === 1;
+  const offset = buf.length >= 25 ? 9 : 5;
+  const lng = view.getFloat64(offset, le);
+  const lat = view.getFloat64(offset + 8, le);
+  return { lat, lng };
+}
+
+function parseCoords(val) {
+  if (!val) return null;
+  if (val.lat != null) return val;
+  if (val.coordinates) return { lng: val.coordinates[0], lat: val.coordinates[1] };
+  if (typeof val === 'string') return parseWkbHex(val);
   return null;
 }
 
+function coordsDepart(l) {
+  return parseCoords(l.depart_coords);
+}
+
 function coordsArrivee(l) {
-  if (l.arrivee_coords?.lat != null) return l.arrivee_coords;
-  if (l.arrivee_coords?.coordinates) return { lng: l.arrivee_coords.coordinates[0], lat: l.arrivee_coords.coordinates[1] };
-  return null;
+  return parseCoords(l.arrivee_coords);
 }
 
 async function chercherDirectesEnLigne(depart, arrivee, supabase) {

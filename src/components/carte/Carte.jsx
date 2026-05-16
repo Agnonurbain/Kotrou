@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Protocol } from 'pmtiles';
 
 const ABIDJAN = { lat: 5.3196, lng: -4.0167 };
 const ZOOM_INITIAL = 13;
 const ZOOM_MIN = 10;
 const ZOOM_MAX = 18;
-
-let protocolAdded = false;
 
 const COULEURS_TRANSPORT = {
   gbaka: '#F97316',
@@ -24,32 +21,20 @@ const COULEURS_SIGNAL = {
   fermeture: '#6B7280',
 };
 
-function buildStyle(tilesUrl) {
-  const isPmtiles = tilesUrl.endsWith('.pmtiles');
-  const sourceUrl = isPmtiles ? `pmtiles://${tilesUrl}` : tilesUrl;
-
-  return {
-    version: 8,
-    sources: {
-      protomaps: {
-        type: 'vector',
-        ...(isPmtiles ? { url: sourceUrl } : { tiles: [sourceUrl], maxzoom: 15 }),
-      },
+const STYLE_OSM = {
+  version: 8,
+  sources: {
+    osm: {
+      type: 'raster',
+      tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+      tileSize: 256,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     },
-    layers: [
-      { id: 'background', type: 'background', paint: { 'background-color': '#f5f5f5' } },
-      { id: 'water', type: 'fill', source: 'protomaps', 'source-layer': 'water', paint: { 'fill-color': '#c4dff6' } },
-      { id: 'landuse', type: 'fill', source: 'protomaps', 'source-layer': 'landuse', paint: { 'fill-color': '#e8f0e4' }, filter: ['in', 'pmap:kind', 'park', 'garden', 'forest'] },
-      { id: 'roads-minor', type: 'line', source: 'protomaps', 'source-layer': 'roads', paint: { 'line-color': '#e0e0e0', 'line-width': 1 }, filter: ['in', 'pmap:kind', 'minor_road', 'other'] },
-      { id: 'roads-major', type: 'line', source: 'protomaps', 'source-layer': 'roads', paint: { 'line-color': '#ffffff', 'line-width': 2.5 }, filter: ['in', 'pmap:kind', 'major_road', 'medium_road'] },
-      { id: 'roads-highway', type: 'line', source: 'protomaps', 'source-layer': 'roads', paint: { 'line-color': '#ffd080', 'line-width': 3 }, filter: ['==', 'pmap:kind', 'highway'] },
-      { id: 'buildings', type: 'fill', source: 'protomaps', 'source-layer': 'buildings', paint: { 'fill-color': '#e0dcd8', 'fill-opacity': 0.6 }, minzoom: 14 },
-      { id: 'roads-labels', type: 'symbol', source: 'protomaps', 'source-layer': 'roads', layout: { 'text-field': ['get', 'name'], 'text-size': 11, 'symbol-placement': 'line' }, paint: { 'text-color': '#999', 'text-halo-color': '#fff', 'text-halo-width': 1.5 }, minzoom: 15 },
-      { id: 'places', type: 'symbol', source: 'protomaps', 'source-layer': 'places', layout: { 'text-field': ['get', 'name'], 'text-size': ['interpolate', ['linear'], ['zoom'], 10, 12, 15, 16] }, paint: { 'text-color': '#666', 'text-halo-color': '#fff', 'text-halo-width': 1.5 }, minzoom: 11 },
-    ],
-    glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
-  };
-}
+  },
+  layers: [
+    { id: 'osm-tiles', type: 'raster', source: 'osm', minzoom: 0, maxzoom: 19 },
+  ],
+};
 
 function parseCoords(c) {
   if (!c) return null;
@@ -76,18 +61,11 @@ export default function Carte({
   useEffect(() => {
     if (!conteneurRef.current) return;
 
-    if (!protocolAdded) {
-      const protocol = new Protocol();
-      maplibregl.addProtocol('pmtiles', protocol.tile);
-      protocolAdded = true;
-    }
-
-    const tilesUrl = import.meta.env.VITE_MAPTILES_URL || '';
     const c = centre || ABIDJAN;
 
     const map = new maplibregl.Map({
       container: conteneurRef.current,
-      style: buildStyle(tilesUrl),
+      style: STYLE_OSM,
       center: [c.lng, c.lat],
       zoom: zoom || ZOOM_INITIAL,
       minZoom: ZOOM_MIN,
