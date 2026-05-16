@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { AlertTriangle, Star, X } from 'lucide-react';
+import { AlertTriangle, Star, X, Share2 } from 'lucide-react';
 import { fr } from '../i18n/fr';
 import Header from '../components/layout/Header';
 import Carte from '../components/carte/Carte';
@@ -11,6 +11,7 @@ import EtatVide from '../components/ui/EtatVide';
 import Bouton from '../components/ui/Bouton';
 import ChampTexte from '../components/ui/ChampTexte';
 import BoutonSignalement from '../components/signalement/BoutonSignalement';
+import ModalPartage from '../components/itineraire/ModalPartage';
 import Toast from '../components/ui/Toast';
 import { useLignes } from '../hooks/useLignes';
 import { useTrajets } from '../hooks/useTrajets';
@@ -47,6 +48,7 @@ export default function Itineraire() {
   const [saveHeureArrivee, setSaveHeureArrivee] = useState('');
   const [saveJours, setSaveJours] = useState(['lun', 'mar', 'mer', 'jeu', 'ven']);
   const [saving, setSaving] = useState(false);
+  const [showPartage, setShowPartage] = useState(false);
 
   const depLat = parseFloat(params.get('dep_lat'));
   const depLng = parseFloat(params.get('dep_lng'));
@@ -84,7 +86,14 @@ export default function Itineraire() {
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-kotrou-fond flex flex-col">
-      <Header titre={fr.itineraire.titre} retour />
+      <Header
+        titre={fr.itineraire.titre}
+        retour
+        action={etat === 'success' && it ? {
+          icone: <Share2 className="w-5 h-5" />,
+          onClick: () => setShowPartage(true),
+        } : undefined}
+      />
 
       {etat === 'loading' && (
         <div className="p-4 space-y-4">
@@ -258,6 +267,14 @@ export default function Itineraire() {
             </Bouton>
           </div>
         </div>
+      )}
+
+      {showPartage && it && (
+        <ModalPartage
+          itineraire={{ ...it, depart_nom: depNom, arrivee_nom: arrNom }}
+          ouvert={showPartage}
+          onFermer={() => setShowPartage(false)}
+        />
       )}
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

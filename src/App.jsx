@@ -11,6 +11,7 @@ import Contribution from './pages/Contribution';
 import Validation from './pages/Validation';
 import Profil from './pages/Profil';
 import TrajetsFavoris from './pages/TrajetsFavoris';
+import Partage from './pages/Partage';
 import Parametres from './pages/Parametres';
 
 export default function App() {
@@ -22,6 +23,8 @@ export default function App() {
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/validation" element={<Validation />} />
         <Route path="/trajets-favoris" element={<TrajetsFavoris />} />
+        <Route path="/t/:code" element={<Partage />} />
+        <Route path="/trajet/:code" element={<Partage />} />
         <Route path="/parametres" element={<Parametres />} />
         <Route path="*" element={
           <div className="flex flex-col min-h-screen">
