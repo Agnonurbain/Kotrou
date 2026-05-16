@@ -79,12 +79,19 @@ export function AuthProvider({ children }) {
     return data;
   }, [chargerProfil]);
 
-  const envoyerMagicLink = useCallback(async (email) => {
-    const { error } = await supabase.auth.signInWithOtp({
+  const envoyerEmailOTP = useCallback(async (email) => {
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) throw error;
+  }, []);
+
+  const verifierEmailOTP = useCallback(async (email, code) => {
+    const { data, error } = await supabase.auth.verifyOtp({
       email,
-      options: { emailRedirectTo: window.location.origin },
+      token: code,
+      type: 'email',
     });
     if (error) throw error;
+    return data;
   }, []);
 
   const creerProfilSiNouveau = useCallback(async (user, identifiant) => {
@@ -141,7 +148,8 @@ export function AuthProvider({ children }) {
     enAttente,
     envoyerOTP,
     verifierOTP,
-    envoyerMagicLink,
+    envoyerEmailOTP,
+    verifierEmailOTP,
     seDeconnecter,
     rafraichirProfil,
     badgesDebloques,

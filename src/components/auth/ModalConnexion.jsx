@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import Bouton from '../ui/Bouton';
 
 export default function ModalConnexion() {
-  const { modalOuverte, fermerModal, envoyerOTP, verifierOTP, envoyerMagicLink } = useAuth();
+  const { modalOuverte, fermerModal, envoyerOTP, verifierOTP, envoyerEmailOTP, verifierEmailOTP } = useAuth();
   const [mode, setMode] = useState('email');
   const [etape, setEtape] = useState(1);
   const [email, setEmail] = useState('');
@@ -45,8 +45,10 @@ export default function ModalConnexion() {
     setEnvoi(true);
     setErreur('');
     try {
-      await envoyerMagicLink(email);
-      setEtape(3);
+      await envoyerEmailOTP(email);
+      setEtape(2);
+      setCountdown(60);
+      setTimeout(() => inputsRef.current[0]?.focus(), 100);
     } catch (e) {
       if (e.message?.includes('rate')) {
         setErreur('Trop de tentatives. Réessaie dans quelques minutes.');
@@ -56,7 +58,7 @@ export default function ModalConnexion() {
     } finally {
       setEnvoi(false);
     }
-  }, [email, envoyerMagicLink]);
+  }, [email, envoyerEmailOTP]);
 
   const handleEnvoyerOTP = useCallback(async () => {
     const chiffres = telephone.replace(/\D/g, '');
@@ -119,7 +121,11 @@ export default function ModalConnexion() {
     setEnvoi(true);
     setErreur('');
     try {
-      await verifierOTP(telNormalise, codeStr);
+      if (mode === 'email') {
+        await verifierEmailOTP(email, codeStr);
+      } else {
+        await verifierOTP(telNormalise, codeStr);
+      }
       fermerModal();
     } catch {
       setErreur('Code incorrect. Vérifie et réessaie.');
@@ -128,19 +134,27 @@ export default function ModalConnexion() {
     } finally {
       setEnvoi(false);
     }
-  }, [code, telNormalise, verifierOTP, fermerModal]);
+  }, [code, mode, email, telNormalise, verifierEmailOTP, verifierOTP, fermerModal]);
 
   const renvoyerCode = useCallback(async () => {
     if (countdown > 0) return;
     try {
-      await envoyerOTP(telNormalise);
-      setCountdown(30);
+      if (mode === 'email') {
+        await envoyerEmailOTP(email);
+      } else {
+        await envoyerOTP(telNormalise);
+      }
+      setCountdown(mode === 'email' ? 60 : 30);
     } catch {
       setErreur('Impossible de renvoyer le code.');
     }
-  }, [countdown, telNormalise, envoyerOTP]);
+  }, [countdown, mode, email, telNormalise, envoyerEmailOTP, envoyerOTP]);
 
   if (!modalOuverte) return null;
+
+  const destinataire = mode === 'email'
+    ? email
+    : `${telNormalise.slice(0, 7)}…${telNormalise.slice(-2)}`;
 
   return (
     <div className="fixed inset-0 z-[70] flex items-end justify-center">
@@ -164,7 +178,7 @@ export default function ModalConnexion() {
               <h2 className="text-lg font-bold text-kotrou-gris">Connexion</h2>
               <p className="text-sm text-gray-400 mt-1">
                 {mode === 'email'
-                  ? 'Entre ton email pour recevoir un lien de connexion.'
+                  ? 'Entre ton email pour recevoir un code.'
                   : 'Entre ton numéro pour recevoir un code.'}
               </p>
             </div>
@@ -204,7 +218,7 @@ export default function ModalConnexion() {
               chargement={envoi}
               icone={<ArrowRight className="w-4 h-4" />}
             >
-              {mode === 'email' ? 'Recevoir le lien' : 'Recevoir le code'}
+              Recevoir le code
             </Bouton>
 
             <button
@@ -225,8 +239,11 @@ export default function ModalConnexion() {
             <div className="text-center">
               <h2 className="text-lg font-bold text-kotrou-gris">Code reçu</h2>
               <p className="text-sm text-gray-400 mt-1">
-                Code envoyé au {telNormalise.slice(0, 7)}…{telNormalise.slice(-2)}
+                Code envoyé à {destinataire}
               </p>
+              {mode === 'email' && (
+                <p className="text-xs text-gray-400 mt-1">Vérifie tes spams si tu ne le vois pas.</p>
+              )}
             </div>
 
             <div className="flex justify-center gap-2">
@@ -261,28 +278,6 @@ export default function ModalConnexion() {
 
             <Bouton fullWidth onClick={handleVerifier} chargement={envoi} icone={<Check className="w-4 h-4" />}>
               Confirmer
-            </Bouton>
-          </div>
-        )}
-
-        {etape === 3 && (
-          <div className="space-y-5">
-            <div className="text-center">
-              <div className="w-14 h-14 bg-kotrou-vert/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Mail className="w-7 h-7 text-kotrou-vert" />
-              </div>
-              <h2 className="text-lg font-bold text-kotrou-gris">Vérifie ta boîte mail</h2>
-              <p className="text-sm text-gray-400 mt-2">
-                Un lien de connexion a été envoyé à
-              </p>
-              <p className="text-sm font-semibold text-kotrou-gris mt-1">{email}</p>
-              <p className="text-xs text-gray-400 mt-3">
-                Clique sur le lien dans l'email pour te connecter. Vérifie tes spams si tu ne le vois pas.
-              </p>
-            </div>
-
-            <Bouton fullWidth variante="secondaire" onClick={fermerModal}>
-              Compris
             </Bouton>
           </div>
         )}
