@@ -1,9 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, MapPin, Search, Bus } from 'lucide-react';
 import { QUARTIERS } from '../../data/quartiers';
-import { COMMUNES } from '../../data/communes';
+import { COMMUNES, HUBS } from '../../data/communes';
 import { geocoder } from '../../lib/geocodeur';
 import { supabase } from '../../supabase';
+
+const HUB_PAR_COMMUNE = {};
+for (const hub of HUBS) {
+  const communeId = hub.id.split('_')[0];
+  if (!HUB_PAR_COMMUNE[communeId]) HUB_PAR_COMMUNE[communeId] = hub.coords;
+}
 
 const TOUTES_LOCALISATIONS = [];
 
@@ -18,10 +24,11 @@ for (const [communeId, quartiers] of Object.entries(QUARTIERS)) {
       source: 'quartier',
     });
   }
+  const hubCoords = HUB_PAR_COMMUNE[communeId] || commune.centre;
   TOUTES_LOCALISATIONS.push({
     nom: commune.nom,
-    lat: commune.centre.lat,
-    lng: commune.centre.lng,
+    lat: hubCoords.lat,
+    lng: hubCoords.lng,
     source: 'commune',
   });
 }

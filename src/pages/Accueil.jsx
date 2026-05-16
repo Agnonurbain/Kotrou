@@ -135,14 +135,16 @@ export default function Accueil() {
 
         <BoutonSignalement onSignaler={handleSignaler} />
 
-        <BoutonGbaka
-          actif={gpsBus.actif}
-          nbPoints={gpsBus.nbPoints}
-          distanceKm={gpsBus.distanceKm}
-          wakeLockActif={gpsBus.wakeLockActif}
-          onDemarrer={handleDemarrerGbaka}
-          onTerminer={() => setModalFin(true)}
-        />
+        {!sheetOuvert && (
+          <BoutonGbaka
+            actif={gpsBus.actif}
+            nbPoints={gpsBus.nbPoints}
+            distanceKm={gpsBus.distanceKm}
+            wakeLockActif={gpsBus.wakeLockActif}
+            onDemarrer={handleDemarrerGbaka}
+            onTerminer={() => setModalFin(true)}
+          />
+        )}
       </div>
 
       {sheetOuvert && (

@@ -2,10 +2,11 @@ import { haversine, tempsMarche } from './distance';
 import { HUBS } from '../data/communes';
 import { getToutesLignesLocales } from './db-locale';
 
-const RAYON_DEPART = 10000;
-const RAYON_HUB = 10000;
-const RAYON_ARRIVEE = 10000;
+const RAYON_DEPART = 3000;
+const RAYON_HUB = 5000;
+const RAYON_ARRIVEE = 3000;
 const RAYON_DANGER = 500;
+const SEUIL_MARCHE_WORO = 1000;
 
 function milieu(a, b) {
   return { lat: (a.lat + b.lat) / 2, lng: (a.lng + b.lng) / 2 };
@@ -17,13 +18,21 @@ function scorer(prixTotal, dureeTotal, fiabilite) {
   return scorePrix * 0.4 + scoreDuree * 0.4 + (fiabilite / 10) * 0.2;
 }
 
+function descriptionMarche(dist, destination) {
+  if (dist < SEUIL_MARCHE_WORO) return `Marcher jusqu'à ${destination}`;
+  const km = (dist / 1000).toFixed(1);
+  return `Se rendre à ${destination} (${km} km — wôrô ou taxi)`;
+}
+
 function construireDirecte(ligne, depart, arrivee) {
   const distDepart = haversine(depart, coordsDepart(ligne));
   const distArrivee = haversine(arrivee, coordsArrivee(ligne));
+  const dureeDepReal = distDepart > SEUIL_MARCHE_WORO ? Math.ceil(distDepart / 300) : tempsMarche(distDepart);
+  const dureeArrReal = distArrivee > SEUIL_MARCHE_WORO ? Math.ceil(distArrivee / 300) : tempsMarche(distArrivee);
   const etapes = [
-    { type: 'marche', dureeMinutes: tempsMarche(distDepart), prix: 0, description: `Marcher jusqu'à ${ligne.depart_gare}` },
+    { type: 'marche', dureeMinutes: dureeDepReal, prix: 0, description: descriptionMarche(distDepart, ligne.depart_gare) },
     { type: ligne.type, dureeMinutes: (ligne.duree ?? 20) + 5, prix: ligne.prix ?? null, ligne, description: `Prendre ${ligne.nom_ligne} depuis ${ligne.depart_gare}` },
-    { type: 'marche', dureeMinutes: tempsMarche(distArrivee), prix: 0, description: "Marcher jusqu'à destination" },
+    { type: 'marche', dureeMinutes: dureeArrReal, prix: 0, description: descriptionMarche(distArrivee, 'destination') },
   ];
   const prixTotal = etapes.reduce((s, e) => s + (e.prix ?? 0), 0);
   const dureeTotal = etapes.reduce((s, e) => s + e.dureeMinutes, 0);
@@ -33,12 +42,14 @@ function construireDirecte(ligne, depart, arrivee) {
 function construireCorrespondance(l1, l2, hub, depart, arrivee) {
   const distDepart = haversine(depart, coordsDepart(l1));
   const distArrivee = haversine(arrivee, coordsArrivee(l2));
+  const dureeDepReal = distDepart > SEUIL_MARCHE_WORO ? Math.ceil(distDepart / 300) : tempsMarche(distDepart);
+  const dureeArrReal = distArrivee > SEUIL_MARCHE_WORO ? Math.ceil(distArrivee / 300) : tempsMarche(distArrivee);
   const etapes = [
-    { type: 'marche', dureeMinutes: tempsMarche(distDepart), prix: 0, description: `Marcher jusqu'à ${l1.depart_gare}` },
+    { type: 'marche', dureeMinutes: dureeDepReal, prix: 0, description: descriptionMarche(distDepart, l1.depart_gare) },
     { type: l1.type, dureeMinutes: (l1.duree ?? 20) + 5, prix: l1.prix ?? null, ligne: l1, description: `Prendre ${l1.nom_ligne} depuis ${l1.depart_gare}` },
     { type: 'marche', dureeMinutes: 10, prix: 0, description: `Correspondance à ${hub.nom}` },
     { type: l2.type, dureeMinutes: (l2.duree ?? 20) + 5, prix: l2.prix ?? null, ligne: l2, description: `Prendre ${l2.nom_ligne} depuis ${l2.depart_gare}` },
-    { type: 'marche', dureeMinutes: tempsMarche(distArrivee), prix: 0, description: "Marcher jusqu'à destination" },
+    { type: 'marche', dureeMinutes: dureeArrReal, prix: 0, description: descriptionMarche(distArrivee, 'destination') },
   ];
   const prixTotal = etapes.reduce((s, e) => s + (e.prix ?? 0), 0);
   const dureeTotal = etapes.reduce((s, e) => s + e.dureeMinutes, 0);
