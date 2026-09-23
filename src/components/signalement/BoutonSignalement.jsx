@@ -56,11 +56,6 @@ export default function BoutonSignalement({ onSignaler }) {
 
       if (error) throw error;
 
-      await supabase.from('profils').update({
-        points: supabase.rpc ? undefined : undefined,
-      }).eq('id', user.id);
-      await supabase.rpc('incrementer_points', { uid: user.id, pts: 2 }).catch(() => {});
-
       setOuvert(false);
       onSignaler?.(typeChoisi);
     } catch {

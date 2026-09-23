@@ -1,492 +1,507 @@
 {
-  "/home/aymeric/Kotrou/package.json": {
+  "package.json": {
     "mtime": 1790158251.6981695,
     "ast_hash": "c142cef81bc27df872abc8f81a6e063d",
     "semantic_hash": "c142cef81bc27df872abc8f81a6e063d"
   },
-  "/home/aymeric/Kotrou/postcss.config.js": {
+  "postcss.config.js": {
     "mtime": 1790158251.6981695,
     "ast_hash": "c735540bb63936a123bc867d950c9f69",
     "semantic_hash": "c735540bb63936a123bc867d950c9f69"
   },
-  "/home/aymeric/Kotrou/public/manifest.json": {
+  "public/manifest.json": {
     "mtime": 1790158251.6991694,
     "ast_hash": "8728d7440708d10e6b0a74014dce536a",
     "semantic_hash": "8728d7440708d10e6b0a74014dce536a"
   },
-  "/home/aymeric/Kotrou/public/sw-notifications.js": {
+  "public/sw-notifications.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "600cb2544699d112435066277ac4fe54",
     "semantic_hash": "600cb2544699d112435066277ac4fe54"
   },
-  "/home/aymeric/Kotrou/scripts/generer-vapid.js": {
+  "scripts/generer-vapid.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "debcbd552f657089229c940e0148d1a0",
     "semantic_hash": "debcbd552f657089229c940e0148d1a0"
   },
-  "/home/aymeric/Kotrou/scripts/geocode-cache.json": {
+  "scripts/geocode-cache.json": {
     "mtime": 1790158251.6991694,
     "ast_hash": "fdb5df01a071df24eb7d93c9cf1c4390",
     "semantic_hash": "fdb5df01a071df24eb7d93c9cf1c4390"
   },
-  "/home/aymeric/Kotrou/scripts/importLignes.js": {
+  "scripts/importLignes.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "4b568c6d4420c22d8e762018844e507e",
     "semantic_hash": "4b568c6d4420c22d8e762018844e507e"
   },
-  "/home/aymeric/Kotrou/src/App.jsx": {
+  "src/App.jsx": {
     "mtime": 1790158251.6991694,
     "ast_hash": "e40064dff89fe02a0444c543b80870ef",
     "semantic_hash": "e40064dff89fe02a0444c543b80870ef"
   },
-  "/home/aymeric/Kotrou/src/__tests__/db-locale.test.js": {
+  "src/__tests__/db-locale.test.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "7f6a00a75770859e522808de4c517e28",
     "semantic_hash": "7f6a00a75770859e522808de4c517e28"
   },
-  "/home/aymeric/Kotrou/src/__tests__/distance.test.js": {
+  "src/__tests__/distance.test.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "c2b62e1a336b1e1a70556fd57ccbfbd5",
     "semantic_hash": "c2b62e1a336b1e1a70556fd57ccbfbd5"
   },
-  "/home/aymeric/Kotrou/src/__tests__/geocodeur.test.js": {
+  "src/__tests__/geocodeur.test.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "8b8be1661213a324e58c3f6a2890125f",
     "semantic_hash": "8b8be1661213a324e58c3f6a2890125f"
   },
-  "/home/aymeric/Kotrou/src/__tests__/partage.test.js": {
+  "src/__tests__/partage.test.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "fd831b960c0c1b425dff66e7f4c20b10",
     "semantic_hash": "fd831b960c0c1b425dff66e7f4c20b10"
   },
-  "/home/aymeric/Kotrou/src/__tests__/prix.test.js": {
+  "src/__tests__/prix.test.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "5ce7c7f251592e883893cfd5c481e964",
     "semantic_hash": "5ce7c7f251592e883893cfd5c481e964"
   },
-  "/home/aymeric/Kotrou/src/__tests__/routeur.test.js": {
+  "src/__tests__/routeur.test.js": {
     "mtime": 1790158251.6991694,
     "ast_hash": "6c3bc59f0021cb18f8516aac26adbc6a",
     "semantic_hash": "6c3bc59f0021cb18f8516aac26adbc6a"
   },
-  "/home/aymeric/Kotrou/src/components/auth/ModalConnexion.jsx": {
+  "src/components/auth/ModalConnexion.jsx": {
     "mtime": 1790158251.6991694,
     "ast_hash": "65c50f3d81dfa6c8952d81f1f530962b",
     "semantic_hash": "65c50f3d81dfa6c8952d81f1f530962b"
   },
-  "/home/aymeric/Kotrou/src/components/carte/BoutonGbaka.jsx": {
+  "src/components/carte/BoutonGbaka.jsx": {
     "mtime": 1790158251.6991694,
     "ast_hash": "5fae1f97a7262609ba40fefcf65400eb",
     "semantic_hash": "5fae1f97a7262609ba40fefcf65400eb"
   },
-  "/home/aymeric/Kotrou/src/components/carte/Carte.jsx": {
+  "src/components/carte/Carte.jsx": {
     "mtime": 1790158251.6991694,
     "ast_hash": "dab68170b632c213cb0df6b8ae79b63a",
     "semantic_hash": "dab68170b632c213cb0df6b8ae79b63a"
   },
-  "/home/aymeric/Kotrou/src/components/carte/MarqueurGare.jsx": {
+  "src/components/carte/MarqueurGare.jsx": {
     "mtime": 1790158251.6991694,
     "ast_hash": "de23b46d78ba30cee3f77473de05b9c5",
     "semantic_hash": "de23b46d78ba30cee3f77473de05b9c5"
   },
-  "/home/aymeric/Kotrou/src/components/carte/TraceItineraire.jsx": {
+  "src/components/carte/TraceItineraire.jsx": {
     "mtime": 1790158251.6991694,
     "ast_hash": "232fdb31a775317781620e68f2c21d46",
     "semantic_hash": "232fdb31a775317781620e68f2c21d46"
   },
-  "/home/aymeric/Kotrou/src/components/contribution/CarteContribution.jsx": {
+  "src/components/contribution/CarteContribution.jsx": {
     "mtime": 1790158251.6991694,
     "ast_hash": "61dd600310b24502af91c1a4fa6fd095",
     "semantic_hash": "61dd600310b24502af91c1a4fa6fd095"
   },
-  "/home/aymeric/Kotrou/src/components/itineraire/BadgeTransport.jsx": {
+  "src/components/itineraire/BadgeTransport.jsx": {
     "mtime": 1790158251.6991694,
     "ast_hash": "2fe460c28bcac5b73b0e8f7cbc653f27",
     "semantic_hash": "2fe460c28bcac5b73b0e8f7cbc653f27"
   },
-  "/home/aymeric/Kotrou/src/components/itineraire/CarteEtape.jsx": {
+  "src/components/itineraire/CarteEtape.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "f75205aac0fd20a9e7d6ff4f9e18cc68",
     "semantic_hash": "f75205aac0fd20a9e7d6ff4f9e18cc68"
   },
-  "/home/aymeric/Kotrou/src/components/itineraire/ModalPartage.jsx": {
+  "src/components/itineraire/ModalPartage.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "0b6aae089b0cdcfe7921437f7e7a6f52",
     "semantic_hash": "0b6aae089b0cdcfe7921437f7e7a6f52"
   },
-  "/home/aymeric/Kotrou/src/components/itineraire/PrixTotal.jsx": {
+  "src/components/itineraire/PrixTotal.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "5d8fe41b70043820da73a83c5c1e2cd3",
     "semantic_hash": "5d8fe41b70043820da73a83c5c1e2cd3"
   },
-  "/home/aymeric/Kotrou/src/components/layout/BottomNav.jsx": {
+  "src/components/layout/BottomNav.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "83c656638b2d9ce425bd5a166186a947",
     "semantic_hash": "83c656638b2d9ce425bd5a166186a947"
   },
-  "/home/aymeric/Kotrou/src/components/layout/Header.jsx": {
+  "src/components/layout/Header.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "2c540fe67678c654c5a3cda44556cc7c",
     "semantic_hash": "2c540fe67678c654c5a3cda44556cc7c"
   },
-  "/home/aymeric/Kotrou/src/components/modals/ModalFinTrajet.jsx": {
+  "src/components/modals/ModalFinTrajet.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "e18113e3cab3e50cf3f5a7dfdcb2ff8d",
     "semantic_hash": "e18113e3cab3e50cf3f5a7dfdcb2ff8d"
   },
-  "/home/aymeric/Kotrou/src/components/modals/ModalTrajetEnCours.jsx": {
+  "src/components/modals/ModalTrajetEnCours.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "c5098cfe344e381f129af04eda84dcb4",
     "semantic_hash": "c5098cfe344e381f129af04eda84dcb4"
   },
-  "/home/aymeric/Kotrou/src/components/prix/BadgePrixActuel.jsx": {
+  "src/components/prix/BadgePrixActuel.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "dbe288e1e80badf446c82e2c9513a7fb",
     "semantic_hash": "dbe288e1e80badf446c82e2c9513a7fb"
   },
-  "/home/aymeric/Kotrou/src/components/prix/BoutonSignalerPrix.jsx": {
+  "src/components/prix/BoutonSignalerPrix.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "9d1b2d1e5e0f918225c97e3bf76fcd58",
     "semantic_hash": "9d1b2d1e5e0f918225c97e3bf76fcd58"
   },
-  "/home/aymeric/Kotrou/src/components/prix/HistoriquePrix.jsx": {
+  "src/components/prix/HistoriquePrix.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "68da298b1888eb4bdcd6c5fe212032f6",
     "semantic_hash": "68da298b1888eb4bdcd6c5fe212032f6"
   },
-  "/home/aymeric/Kotrou/src/components/prix/ModalSignalerPrix.jsx": {
+  "src/components/prix/ModalSignalerPrix.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "f0602b56bdb54412adf8a507843e510d",
     "semantic_hash": "f0602b56bdb54412adf8a507843e510d"
   },
-  "/home/aymeric/Kotrou/src/components/recherche/AutoComplete.jsx": {
+  "src/components/recherche/AutoComplete.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "83b932bcb35f31f095dd42d3b7d4686c",
     "semantic_hash": "83b932bcb35f31f095dd42d3b7d4686c"
   },
-  "/home/aymeric/Kotrou/src/components/recherche/BarreRecherche.jsx": {
+  "src/components/recherche/BarreRecherche.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "77e36ff67d15b6a6ba84f7ce64474668",
     "semantic_hash": "77e36ff67d15b6a6ba84f7ce64474668"
   },
-  "/home/aymeric/Kotrou/src/components/signalement/BoutonSignalement.jsx": {
-    "mtime": 1790158251.7001696,
-    "ast_hash": "f5dc27f741c961629569e7ffd8fb9f57",
-    "semantic_hash": "f5dc27f741c961629569e7ffd8fb9f57"
+  "src/components/signalement/BoutonSignalement.jsx": {
+    "mtime": 1790160553.7688577,
+    "ast_hash": "42b54a04f76f1c4d076d34631c96f622",
+    "semantic_hash": ""
   },
-  "/home/aymeric/Kotrou/src/components/ui/Badge.jsx": {
+  "src/components/ui/Badge.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "c488667ea242d85190547fd17e47763f",
     "semantic_hash": "c488667ea242d85190547fd17e47763f"
   },
-  "/home/aymeric/Kotrou/src/components/ui/BanniereOffline.jsx": {
+  "src/components/ui/BanniereOffline.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "7e6dc8a66aa8d17488b265cc00ae93ae",
     "semantic_hash": "7e6dc8a66aa8d17488b265cc00ae93ae"
   },
-  "/home/aymeric/Kotrou/src/components/ui/Bouton.jsx": {
+  "src/components/ui/Bouton.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "40cf789b1d4642064756a245c969b0e4",
     "semantic_hash": "40cf789b1d4642064756a245c969b0e4"
   },
-  "/home/aymeric/Kotrou/src/components/ui/CarteTrajetFavori.jsx": {
+  "src/components/ui/CarteTrajetFavori.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "8a5e7eb081ef14fd67102a42aa95bf18",
     "semantic_hash": "8a5e7eb081ef14fd67102a42aa95bf18"
   },
-  "/home/aymeric/Kotrou/src/components/ui/ChampTexte.jsx": {
+  "src/components/ui/ChampTexte.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "d8fb2e7109759d3b829ccd3228af45f3",
     "semantic_hash": "d8fb2e7109759d3b829ccd3228af45f3"
   },
-  "/home/aymeric/Kotrou/src/components/ui/Chargement.jsx": {
+  "src/components/ui/Chargement.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "cbafcfb5edeb47ee141cc1c8f99bfcf2",
     "semantic_hash": "cbafcfb5edeb47ee141cc1c8f99bfcf2"
   },
-  "/home/aymeric/Kotrou/src/components/ui/EtatVide.jsx": {
+  "src/components/ui/EtatVide.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "4c1dcea63919c4588e87bf2b3bfab1b0",
     "semantic_hash": "4c1dcea63919c4588e87bf2b3bfab1b0"
   },
-  "/home/aymeric/Kotrou/src/components/ui/ListeDeroulante.jsx": {
+  "src/components/ui/ListeDeroulante.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "24b178b2608e4c572e7af7ab4c1ae76f",
     "semantic_hash": "24b178b2608e4c572e7af7ab4c1ae76f"
   },
-  "/home/aymeric/Kotrou/src/components/ui/Toast.jsx": {
+  "src/components/ui/Toast.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "8776621a17268d6cd8dea60f62b2b661",
     "semantic_hash": "8776621a17268d6cd8dea60f62b2b661"
   },
-  "/home/aymeric/Kotrou/src/data/badges.js": {
+  "src/data/badges.js": {
     "mtime": 1790158251.7001696,
     "ast_hash": "b4e3ef8dae77f529dfc2238c53b991d0",
     "semantic_hash": "b4e3ef8dae77f529dfc2238c53b991d0"
   },
-  "/home/aymeric/Kotrou/src/data/communes.js": {
+  "src/data/communes.js": {
     "mtime": 1790158251.7001696,
     "ast_hash": "98c590b0126f861b073a1dab40321b26",
     "semantic_hash": "98c590b0126f861b073a1dab40321b26"
   },
-  "/home/aymeric/Kotrou/src/data/quartiers.js": {
+  "src/data/quartiers.js": {
     "mtime": 1790158251.7001696,
     "ast_hash": "a730187ead19108d237f61624ecf0dca",
     "semantic_hash": "a730187ead19108d237f61624ecf0dca"
   },
-  "/home/aymeric/Kotrou/src/data/seed-lignes.js": {
+  "src/data/seed-lignes.js": {
     "mtime": 1790158251.7001696,
     "ast_hash": "ebe3f101bde7140ae3625650a9b9b93e",
     "semantic_hash": "ebe3f101bde7140ae3625650a9b9b93e"
   },
-  "/home/aymeric/Kotrou/src/hooks/useAuth.jsx": {
+  "src/hooks/useAuth.jsx": {
     "mtime": 1790158251.7001696,
     "ast_hash": "8811d99d5fb7c50510beadd96f46dfd3",
     "semantic_hash": "8811d99d5fb7c50510beadd96f46dfd3"
   },
-  "/home/aymeric/Kotrou/src/hooks/useGpsBus.js": {
+  "src/hooks/useGpsBus.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "2575a080722f77e5c417dfa6b45b2952",
     "semantic_hash": "2575a080722f77e5c417dfa6b45b2952"
   },
-  "/home/aymeric/Kotrou/src/hooks/useLignes.js": {
+  "src/hooks/useLignes.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "51ab6e1b361cb649cb5d8cc30cd6c8f0",
     "semantic_hash": "51ab6e1b361cb649cb5d8cc30cd6c8f0"
   },
-  "/home/aymeric/Kotrou/src/hooks/useOffline.js": {
+  "src/hooks/useOffline.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "d7b9729b8da0de04f3deff23f9ab66d6",
     "semantic_hash": "d7b9729b8da0de04f3deff23f9ab66d6"
   },
-  "/home/aymeric/Kotrou/src/hooks/usePartage.js": {
+  "src/hooks/usePartage.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "1cb7a2b928391dec36e2301c00f6ff65",
     "semantic_hash": "1cb7a2b928391dec36e2301c00f6ff65"
   },
-  "/home/aymeric/Kotrou/src/hooks/usePosition.js": {
+  "src/hooks/usePosition.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "4b8b347b046548e7fd4b1af3e1c4a527",
     "semantic_hash": "4b8b347b046548e7fd4b1af3e1c4a527"
   },
-  "/home/aymeric/Kotrou/src/hooks/usePrix.js": {
+  "src/hooks/usePrix.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "abdb0faca240b00844f3fe8afb087f56",
     "semantic_hash": "abdb0faca240b00844f3fe8afb087f56"
   },
-  "/home/aymeric/Kotrou/src/hooks/usePushNotifications.js": {
+  "src/hooks/usePushNotifications.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "98417f939f719a017ab874438793fcdc",
     "semantic_hash": "98417f939f719a017ab874438793fcdc"
   },
-  "/home/aymeric/Kotrou/src/hooks/useSignalements.js": {
+  "src/hooks/useSignalements.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "5b921a47d8f9886368e1291dde3df0fa",
     "semantic_hash": "5b921a47d8f9886368e1291dde3df0fa"
   },
-  "/home/aymeric/Kotrou/src/hooks/useTrajets.js": {
+  "src/hooks/useTrajets.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "8d0eeb3d14b246f072a11f6f57633a0a",
     "semantic_hash": "8d0eeb3d14b246f072a11f6f57633a0a"
   },
-  "/home/aymeric/Kotrou/src/i18n/fr.js": {
+  "src/i18n/fr.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "be2ab319e5e156300552af17b42a6188",
     "semantic_hash": "be2ab319e5e156300552af17b42a6188"
   },
-  "/home/aymeric/Kotrou/src/lib/db-locale.js": {
+  "src/lib/db-locale.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "dcae58b20d99213140117a477c567c7d",
     "semantic_hash": "dcae58b20d99213140117a477c567c7d"
   },
-  "/home/aymeric/Kotrou/src/lib/distance.js": {
+  "src/lib/distance.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "a83a387452f020ba24063768b6a70c0f",
     "semantic_hash": "a83a387452f020ba24063768b6a70c0f"
   },
-  "/home/aymeric/Kotrou/src/lib/geocodeur.js": {
+  "src/lib/geocodeur.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "834342e45b473d66c96993733119e008",
     "semantic_hash": "834342e45b473d66c96993733119e008"
   },
-  "/home/aymeric/Kotrou/src/lib/partage.js": {
+  "src/lib/partage.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "6b88ae1c250971837bf1895f6ec0359f",
     "semantic_hash": "6b88ae1c250971837bf1895f6ec0359f"
   },
-  "/home/aymeric/Kotrou/src/lib/prix.js": {
+  "src/lib/prix.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "55abff8b0f74c88152fc47df09da81ba",
     "semantic_hash": "55abff8b0f74c88152fc47df09da81ba"
   },
-  "/home/aymeric/Kotrou/src/lib/routeur.js": {
+  "src/lib/routeur.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "b40e117e4af11943f8bad06f8af78e2d",
     "semantic_hash": "b40e117e4af11943f8bad06f8af78e2d"
   },
-  "/home/aymeric/Kotrou/src/lib/traces.js": {
+  "src/lib/traces.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "1b84a0f7bb9612b395527a6872e522f8",
     "semantic_hash": "1b84a0f7bb9612b395527a6872e522f8"
   },
-  "/home/aymeric/Kotrou/src/lib/upload-photo.js": {
+  "src/lib/upload-photo.js": {
     "mtime": 1790158251.7011695,
     "ast_hash": "df438d2f0918ccc370f277f7963c1d8d",
     "semantic_hash": "df438d2f0918ccc370f277f7963c1d8d"
   },
-  "/home/aymeric/Kotrou/src/main.jsx": {
+  "src/main.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "995ce09b5125b4d31e4a5067cfbbfb2f",
     "semantic_hash": "995ce09b5125b4d31e4a5067cfbbfb2f"
   },
-  "/home/aymeric/Kotrou/src/pages/Accueil.jsx": {
+  "src/pages/Accueil.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "f945aebe4b1bc7569ce219a345c3e0dc",
     "semantic_hash": "f945aebe4b1bc7569ce219a345c3e0dc"
   },
-  "/home/aymeric/Kotrou/src/pages/Contribution.jsx": {
+  "src/pages/Contribution.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "dd7d4e99d4549551dbf89331034893cf",
     "semantic_hash": "dd7d4e99d4549551dbf89331034893cf"
   },
-  "/home/aymeric/Kotrou/src/pages/Debug.jsx": {
+  "src/pages/Debug.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "0ecf9545b40681a1f70832b0a1ce3ce8",
     "semantic_hash": "0ecf9545b40681a1f70832b0a1ce3ce8"
   },
-  "/home/aymeric/Kotrou/src/pages/Detail.jsx": {
+  "src/pages/Detail.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "abf8a0b70162245b111c8beea687c514",
     "semantic_hash": "abf8a0b70162245b111c8beea687c514"
   },
-  "/home/aymeric/Kotrou/src/pages/Explorateur.jsx": {
+  "src/pages/Explorateur.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "c8a1fe754cdb25dcfc098f687813ac10",
     "semantic_hash": "c8a1fe754cdb25dcfc098f687813ac10"
   },
-  "/home/aymeric/Kotrou/src/pages/Itineraire.jsx": {
+  "src/pages/Itineraire.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "084c8810cc27d5dff79b2751b4bebbb2",
     "semantic_hash": "084c8810cc27d5dff79b2751b4bebbb2"
   },
-  "/home/aymeric/Kotrou/src/pages/Parametres.jsx": {
+  "src/pages/Parametres.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "3c57494cef9ff303181ee248028bfb81",
     "semantic_hash": "3c57494cef9ff303181ee248028bfb81"
   },
-  "/home/aymeric/Kotrou/src/pages/Partage.jsx": {
+  "src/pages/Partage.jsx": {
     "mtime": 1790158251.7011695,
     "ast_hash": "714cc67d74a6df5ed7cc6b2aa0479943",
     "semantic_hash": "714cc67d74a6df5ed7cc6b2aa0479943"
   },
-  "/home/aymeric/Kotrou/src/pages/Profil.jsx": {
+  "src/pages/Profil.jsx": {
     "mtime": 1790158251.7021694,
     "ast_hash": "d72fa52985cdbd86fb0d535906895e27",
     "semantic_hash": "d72fa52985cdbd86fb0d535906895e27"
   },
-  "/home/aymeric/Kotrou/src/pages/TrajetsFavoris.jsx": {
+  "src/pages/TrajetsFavoris.jsx": {
     "mtime": 1790158251.7021694,
     "ast_hash": "62f41486dea80bb8267f7fe57158ade6",
     "semantic_hash": "62f41486dea80bb8267f7fe57158ade6"
   },
-  "/home/aymeric/Kotrou/src/pages/Validation.jsx": {
+  "src/pages/Validation.jsx": {
     "mtime": 1790158251.7021694,
     "ast_hash": "ad77fc5f4f3f6a13c3e4a04dd703e8e1",
     "semantic_hash": "ad77fc5f4f3f6a13c3e4a04dd703e8e1"
   },
-  "/home/aymeric/Kotrou/src/supabase.js": {
+  "src/supabase.js": {
     "mtime": 1790158251.7021694,
     "ast_hash": "5b7073526f9bd2e9facbe7e2738fb0e7",
     "semantic_hash": "5b7073526f9bd2e9facbe7e2738fb0e7"
   },
-  "/home/aymeric/Kotrou/supabase/functions/ameliorer-coordonnees/index.ts": {
+  "supabase/functions/ameliorer-coordonnees/index.ts": {
     "mtime": 1790158251.7021694,
     "ast_hash": "a26a551f65168c2fc0319dbf0917739b",
     "semantic_hash": "a26a551f65168c2fc0319dbf0917739b"
   },
-  "/home/aymeric/Kotrou/supabase/functions/notifier-trajets-affectes/index.ts": {
+  "supabase/functions/notifier-trajets-affectes/index.ts": {
     "mtime": 1790158251.7021694,
     "ast_hash": "7dac6e31a078925a881638c4d8944f13",
     "semantic_hash": "7dac6e31a078925a881638c4d8944f13"
   },
-  "/home/aymeric/Kotrou/supabase/migrations/001_initial.sql": {
+  "supabase/migrations/001_initial.sql": {
     "mtime": 1790158251.7021694,
     "ast_hash": "88efab8f1f63c0d7df4e5bbbba3a2505",
     "semantic_hash": "88efab8f1f63c0d7df4e5bbbba3a2505"
   },
-  "/home/aymeric/Kotrou/supabase/migrations/002_triggers.sql": {
+  "supabase/migrations/002_triggers.sql": {
     "mtime": 1790158251.7021694,
     "ast_hash": "24432349b82be8d67b2f1209163ce638",
     "semantic_hash": "24432349b82be8d67b2f1209163ce638"
   },
-  "/home/aymeric/Kotrou/supabase/migrations/003_coords_precision.sql": {
+  "supabase/migrations/003_coords_precision.sql": {
     "mtime": 1790158251.7021694,
     "ast_hash": "23c7fd00dc8dcd4cadfd7d2ba6bf7b15",
     "semantic_hash": "23c7fd00dc8dcd4cadfd7d2ba6bf7b15"
   },
-  "/home/aymeric/Kotrou/supabase/migrations/004_trajets_favoris.sql": {
+  "supabase/migrations/004_trajets_favoris.sql": {
     "mtime": 1790158251.7021694,
     "ast_hash": "5892e2f428f30ef5cc82f90cc98b8157",
     "semantic_hash": "5892e2f428f30ef5cc82f90cc98b8157"
   },
-  "/home/aymeric/Kotrou/supabase/migrations/005_trigger_direct_url.sql": {
+  "supabase/migrations/005_trigger_direct_url.sql": {
     "mtime": 1790158251.7021694,
     "ast_hash": "80decc5d9ad10c098245beae956cb04f",
     "semantic_hash": "80decc5d9ad10c098245beae956cb04f"
   },
-  "/home/aymeric/Kotrou/supabase/migrations/006_traces_gps.sql": {
+  "supabase/migrations/006_traces_gps.sql": {
     "mtime": 1790158251.7021694,
     "ast_hash": "2009ea8d306d7e9a264208eb1d5af405",
     "semantic_hash": "2009ea8d306d7e9a264208eb1d5af405"
   },
-  "/home/aymeric/Kotrou/supabase/migrations/007_prix_variations.sql": {
+  "supabase/migrations/007_prix_variations.sql": {
     "mtime": 1790158251.7021694,
     "ast_hash": "76aa0e6a8d499c09764e3ed4e92a4011",
     "semantic_hash": "76aa0e6a8d499c09764e3ed4e92a4011"
   },
-  "/home/aymeric/Kotrou/supabase/migrations/008_partages.sql": {
+  "supabase/migrations/008_partages.sql": {
     "mtime": 1790158251.7021694,
     "ast_hash": "132771548fcbd37636f02e665ff143a7",
     "semantic_hash": "132771548fcbd37636f02e665ff143a7"
   },
-  "/home/aymeric/Kotrou/tailwind.config.js": {
+  "tailwind.config.js": {
     "mtime": 1790158251.7021694,
     "ast_hash": "1d6988735033e243d3c394ae87a02841",
     "semantic_hash": "1d6988735033e243d3c394ae87a02841"
   },
-  "/home/aymeric/Kotrou/vite.config.js": {
+  "vite.config.js": {
     "mtime": 1790158251.7021694,
     "ast_hash": "58f7eb5a594ee259a11c27c7d03ac259",
     "semantic_hash": "58f7eb5a594ee259a11c27c7d03ac259"
   },
-  "/home/aymeric/Kotrou/DECISIONS.md": {
+  "DECISIONS.md": {
     "mtime": 1790158251.6961696,
     "ast_hash": "444c65484ee47ab5926e30e67f8a9254",
     "semantic_hash": "444c65484ee47ab5926e30e67f8a9254"
   },
-  "/home/aymeric/Kotrou/README.md": {
+  "README.md": {
     "mtime": 1790158251.6961696,
     "ast_hash": "998505ed4b98e341aec45ea036887188",
     "semantic_hash": "998505ed4b98e341aec45ea036887188"
   },
-  "/home/aymeric/Kotrou/index.html": {
+  "index.html": {
     "mtime": 1790158251.6961696,
     "ast_hash": "05a5572f71755b606d46ebaf759a897f",
     "semantic_hash": "05a5572f71755b606d46ebaf759a897f"
   },
-  "/home/aymeric/Kotrou/public/icons/icon-192.png": {
+  "public/icons/icon-192.png": {
     "mtime": 1790158251.6981695,
     "ast_hash": "2e69cc0d91e4a95cd96a9ad6d8af4ba5",
     "semantic_hash": "2e69cc0d91e4a95cd96a9ad6d8af4ba5"
   },
-  "/home/aymeric/Kotrou/public/icons/icon-512.png": {
+  "public/icons/icon-512.png": {
     "mtime": 1790158251.6981695,
     "ast_hash": "9cfc35b669114f973b75b599eaafe2fc",
     "semantic_hash": "9cfc35b669114f973b75b599eaafe2fc"
   },
-  "/home/aymeric/Kotrou/public/icons/icon.svg": {
+  "public/icons/icon.svg": {
     "mtime": 1790158251.6991694,
     "ast_hash": "acab3da492bb0948eded1895c042298d",
     "semantic_hash": "acab3da492bb0948eded1895c042298d"
+  },
+  ".claude/settings.json": {
+    "mtime": 1790162055.8958237,
+    "ast_hash": "f9018b8cdfa9c15be44cd9a84d09950e",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1790158537.2610765,
+    "ast_hash": "d62a71eb6479ec1afb6765897f22d035",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/009_securite.sql": {
+    "mtime": 1790160772.955434,
+    "ast_hash": "7292a8d5befcfb167db013414f23b6b6",
+    "semantic_hash": ""
   }
 }
